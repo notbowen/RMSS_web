@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>RMSS Question Bank</title>
+        
+        <!-- Import EditorJS and it's modules -->
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@latest"></script>
+        <script src="{{ url_for('static', filename='js/app.js') }}" type="module"></script>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    </head>
+    <body>
+        <h1 style="text-align: center;">Placeholder</h1>
+        <div class="question-editor">
+            <input type="checkbox" id="add_question">
+            <button id="edit-btn"><i class="fa fa-unlock"></i></button>
+            <label for="question-id">Question ID: </label>
+            <input type="text" id="question-id">
+
+            <div style="float: right;">
+                <label for="qn-type">Qn Type</label>
+                <select id="qn-type">
+                    <option value="mcq">MCQ</option>
+                    <option value="structured">Structured</option>
+                </select>
+            </div>
+
+            <div id="editorjs"></div>
+            <textarea class="answer-field" id="answer" placeholder="Enter answer here..."></textarea>
+            <input type="submit" id="save-btn" value="Save">
+        </div>
+    </body>
+</html>
