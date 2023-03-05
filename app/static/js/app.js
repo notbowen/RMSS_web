@@ -72,12 +72,12 @@ document.getElementById("save-btn").addEventListener("click", async () => {
     xhr.open("POST", "/api/question/save", true);
     xhr.setRequestHeader("Content-Type", "application/json");
 
-    // Alert user if error occurs
     xhr.onreadystatechange = function () {
-        if (!(xhr.readyState === 4 && xhr.status === 200)) {
-            alert("Error while saving question!");
+        // Alert user if save failed
+        if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Failed to save question!");
             return;
-        } 
+        }
     };
 
     // Send data to server
@@ -85,13 +85,14 @@ document.getElementById("save-btn").addEventListener("click", async () => {
 });
 
 // Hook editing toggle button to EditorJS
-document.getElementById("edit-btn").addEventListener("click", () => {
-    editor.isReady.then(() => {
-        editor.readOnly.toggle();
-        if (editor.readOnly.isEnabled) {
-            document.getElementById("edit-btn").innerHTML = "<i class='fa fa-lock'></i>"
-        } else {
-            document.getElementById("edit-btn").innerHTML = "<i class='fa fa-unlock'></i>"
-        }
-    });
-});
+// document.getElementById("edit-btn").addEventListener("click", () => {
+//     // Toggle read-only mode
+//     editor.readOnly.toggle();
+// 
+//     // Change button icon accordingly
+//     if (editor.readOnly.isEnabled) {
+//         document.getElementById("edit-btn").innerHTML = "<i class='fa fa-lock'></i>"
+//     } else {
+//         document.getElementById("edit-btn").innerHTML = "<i class='fa fa-unlock'></i>"
+//     }
+// });

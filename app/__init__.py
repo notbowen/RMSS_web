@@ -15,6 +15,9 @@ def create_app(config_class=DevConfig):
     from app.images import bp as images_bp
     app.register_blueprint(images_bp, url_prefix='/api/image')
 
+    from app.questions import bp as questions_bp
+    app.register_blueprint(questions_bp, url_prefix='/api/question')
+
     # Create a route for health checks
     @app.route('/health')
     def health():
