@@ -4,11 +4,11 @@ const editor = new EditorJS({
   tools: {
     paragraph: {
       class: Paragraph,
-      inlineToolbar: true,
+      inlineToolbar: ["bold", "italic"],
     },
     list: {
       class: List,
-      inlineToolbar: ["link", "bold"],
+      inlineToolbar: true,
     },
     table: {
       class: Table,
