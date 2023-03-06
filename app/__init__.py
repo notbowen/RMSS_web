@@ -1,12 +1,16 @@
 from flask import Flask
 
 from config import DevConfig
+from app.extensions import db
 
 
 def create_app(config_class=DevConfig):
     # Create and configure the app
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Initialise database
+    db.init_app(app)
 
     # Register the blueprints
     from app.main import bp as frontend_bp

@@ -13,6 +13,7 @@
 }
 
 #editorjs {
+    margin-top: 8px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;
     z-index: -1;

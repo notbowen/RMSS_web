@@ -1,6 +1,9 @@
+import sqlalchemy
 from flask import request, jsonify
 
 from app.questions import bp
+from app.extensions import db
+from app.models.question import Question
 
 @bp.route("/save", methods=["POST"])
 def save_question():
@@ -14,7 +17,82 @@ def save_question():
 
     # Get question from request
     question = request.get_json()
-    print(question)
+
+    # Ensure question has all required fields
+    required_fields = ["id", "is_mcq", "content", "answer", "category_id"]
+    for field in required_fields:
+        if field not in question:
+            response = {
+                "success": 0,
+                "message": f"Missing required field: {field}"
+            }
+            return jsonify(response), 400
+        
+    # Ensure question id is not empty
+    if question["id"].strip() == "":
+        response = {
+            "success": 0,
+            "message": "Question id cannot be empty"
+        }
+        return jsonify(response), 400
+
+    # Ensure content is a JSON object
+    if type(question["content"]) != dict:
+        response = {
+            "success": 0,
+            "message": "Content must be a JSON object"
+        }
+        return jsonify(response), 400
+
+    # Ensure EditorJS has at least 1 block
+    try:
+        if len(question["content"]["blocks"]) == 0:
+            response = {
+                "success": 0,
+                "message": "Content cannot be empty"
+            }
+            return jsonify(response), 400
+    except KeyError:
+        response = {
+            "success": 0,
+            "message": "Content cannot be empty"
+        }
+        return jsonify(response), 400
+    
+    # Ensure answer is not empty
+    if question["answer"].strip() == "":
+        response = {
+            "success": 0,
+            "message": "Answer cannot be empty"
+        }
+        return jsonify(response), 400
+
+    # Create question object
+    question = Question(
+        id=question["id"],
+        is_mcq=question["is_mcq"],
+        content=question["content"],
+        answer=question["answer"],
+        category_id=question["category_id"]
+    )
+
+    # Add question to database
+    try:
+        db.session.add(question)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError:
+        response = {
+            "success": 0,
+            "message": "Question ID already exists"
+        }
+        return jsonify(response), 400
+    except Exception as e:
+        response = {
+            "success": 0,
+            "message": str(e)
+        }
+        return jsonify(response), 400
+
 
     # Craft JSON response
     response = {

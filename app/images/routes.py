@@ -1,6 +1,9 @@
 from flask import request, jsonify, current_app
 from werkzeug.utils import secure_filename
+
 import os
+import uuid
+import datetime
 
 from app.images import bp
 
@@ -37,6 +40,8 @@ def upload_file():
     # Check if filetype is allowed and save image before returning URL
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
+        filename = "{}{:-%Y%m%d%H%M%S}.{}".format(str(uuid.uuid4()), datetime.datetime.now(), filename.rsplit('.', 1)[1].lower())
+
         image.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
 
         # Craft JSON response
