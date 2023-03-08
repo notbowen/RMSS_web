@@ -1,4 +1,4 @@
-import sqlalchemy
+from sqlalchemy import exc
 from flask import request, jsonify
 
 from app.questions import bp
@@ -27,7 +27,7 @@ def save_question():
                 "message": f"Missing required field: {field}"
             }
             return jsonify(response), 400
-        
+
     # Ensure question id is not empty
     if question["id"].strip() == "":
         response = {
@@ -37,7 +37,7 @@ def save_question():
         return jsonify(response), 400
 
     # Ensure content is a JSON object
-    if type(question["content"]) != dict:
+    if not isinstance(question["content"], dict):
         response = {
             "success": 0,
             "message": "Content must be a JSON object"
@@ -58,7 +58,7 @@ def save_question():
             "message": "Content cannot be empty"
         }
         return jsonify(response), 400
-    
+
     # Ensure answer is not empty
     if question["answer"].strip() == "":
         response = {
@@ -80,7 +80,7 @@ def save_question():
     try:
         db.session.add(question)
         db.session.commit()
-    except sqlalchemy.exc.IntegrityError:
+    except exc.IntegrityError:
         response = {
             "success": 0,
             "message": "Question ID already exists"
