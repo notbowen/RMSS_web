@@ -19,7 +19,7 @@ def save_question():
     question = request.get_json()
 
     # Ensure question has all required fields
-    required_fields = ["id", "is_mcq", "content", "answer", "category_id"]
+    required_fields = ["id", "section", "content", "answer", "category_id"]
     for field in required_fields:
         if field not in question:
             response = {
@@ -70,7 +70,7 @@ def save_question():
     # Create question object
     question = Question(
         id=question["id"],
-        is_mcq=question["is_mcq"],
+        section=question["section"],
         content=question["content"],
         answer=question["answer"],
         category_id=question["category_id"]

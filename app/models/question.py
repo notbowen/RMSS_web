@@ -3,7 +3,7 @@ from app.extensions import db
 
 class Question(db.Model):
     id = db.Column(db.String(30), primary_key=True)
-    is_mcq = db.Column(db.Boolean, nullable=False)
+    section = db.Column(db.String(1), nullable=False)
     content = db.Column(db.JSON, nullable=False)
     answer = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)

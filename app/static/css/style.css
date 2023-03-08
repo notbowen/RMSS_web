@@ -1,7 +1,11 @@
 .question-editor {
     width: 717px;
     margin: auto;
+    padding: 30px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
 }
+
 
 .answer-field {
     width: 717px;
@@ -10,13 +14,19 @@
     border-radius: 4px;
     padding: 0;
     margin-top: 5px;
+    background-color: #fcfcfc;
+}
+
+.selected {
+    background: #abe2ff;
+    z-index: -1;
 }
 
 #editorjs {
     margin-top: 8px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;
-    z-index: -1;
+    background-color: #fcfcfc;
 }
 
 #save-btn {
@@ -31,4 +41,36 @@
     color:white;
     cursor: pointer;
     margin: 5px auto auto;
+}
+
+body {
+    margin: 0px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+    display: inline-block;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
 }

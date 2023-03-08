@@ -27,13 +27,15 @@ const editor = new EditorJS({
   },
 });
 
-// Alert if EditorJS fails to load
-try {
-  await editor.isReady;
-  console.log("Editor.js is ready!");
-} catch (error) {
-  alert("Editor.js initialisation failed due to " + error);
-}
+// Alert user if EditorJS fails to load
+editor.isReady
+  .then(() => {
+    console.log("EditorJS is ready to work!");
+  })
+  .catch((reason) => {
+    console.log("EditorJS initialization failed because of ", reason);
+    alert("EditorJS failed to load! Please try again later.");
+  });
 
 // Hook save button to EditorJS
 document.getElementById("save-btn").addEventListener("click", async () => {
@@ -53,9 +55,8 @@ document.getElementById("save-btn").addEventListener("click", async () => {
 
   // Get selected question type
   let question_type_select = document.getElementById("qn-section");
-  let selected =
+  response["section"] =
     question_type_select.options[question_type_select.selectedIndex].value;
-  response["is_mcq"] = selected === "A";
 
   // Get question id and add to response
   if (validateQuestionID()) {
@@ -76,7 +77,7 @@ document.getElementById("save-btn").addEventListener("click", async () => {
 
   // Get question category
   let question_category_select = document.getElementById("qn-category");
-  selected =
+  let selected =
     question_category_select.options[question_category_select.selectedIndex]
       .value;
   response["category_id"] = selected;
@@ -107,20 +108,16 @@ document.getElementById("save-btn").addEventListener("click", async () => {
 
   // Send data to server
   xhr.send(JSON.stringify(response));
-});
 
-// Hook editing toggle button to EditorJS
-// document.getElementById("edit-btn").addEventListener("click", () => {
-//     // Toggle read-only mode
-//     editor.readOnly.toggle();
-//
-//     // Change button icon accordingly
-//     if (editor.readOnly.isEnabled) {
-//         document.getElementById("edit-btn").innerHTML = "<i class='fa fa-lock'></i>"
-//     } else {
-//         document.getElementById("edit-btn").innerHTML = "<i class='fa fa-unlock'></i>"
-//     }
-// });
+  // Alert user if save was successful
+  alert("Question saved successfully!");
+
+  // Clear editor
+  editor.clear();
+
+  // Clear answer
+  document.getElementById("answer").value = "";
+});
 
 // Ensure that question id fields are not empty
 function validateQuestionID() {

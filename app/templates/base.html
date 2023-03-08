@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% if title %}
+    <title>{{ title }} - RMSS Question Bank</title>
+    {% else %}
+    <title>RMSS Question Bank</title>
+    {% endif %}
+
+    <!-- Import EditorJS and it's modules -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@latest"></script>
+
+    <!-- Import other scripts the html may need -->
+    {% block scripts %} {% endblock %}
+
+    <!-- JQuery and Chosen for dropdown searching -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/chosen.jquery.min.js') }}"></script>
+
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/chosen.min.css') }}"
+    />
+  </head>
+  <body>
+    <!-- NavBar -->
+    <ul>
+      <li><a href="#" class="active">Question Bank</a></li>
+      <li><a href="{{ url_for('main.index') }}">Add Question</a></li>
+      <li><a href="{{ url_for('main.book') }}">Add to Book</a></li>
+    </ul>
+
+    {% block content %} {% endblock %}
+  </body>
+</html>
