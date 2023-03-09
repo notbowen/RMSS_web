@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/questions.js') }}" type="module"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Search for Questions</h1>
+
+    <div class="question_search">
+        <label for="section-select">Section</label>
+        <select id="section-select" data-placeholder=" ">
+            <option></option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+        </select>
+
+        <label for="category-select">Category</label>
+        <select id="category-select" data-placeholder=" ">
+            <option></option>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.topic }} ({{ category.subject }}, {{ category.level }})</option>
+            {% endfor %}
+        </select>
+
+        <button onclick="" class="button" id="search-btn"><i class="fa fa-search"></i></button>
+    </div>
+
+    {% block questions %}
+    {% endblock %}
+{% endblock %}

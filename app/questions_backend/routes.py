@@ -1,7 +1,7 @@
 from sqlalchemy import exc
 from flask import request, jsonify
 
-from app.questions import bp
+from app.questions_backend import bp
 from app.extensions import db
 from app.models.question import Question
 

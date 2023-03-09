@@ -17,12 +17,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@latest"></script>
 
+    <!-- JQuery and Chosen for dropdown searching -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/chosen.jquery.min.js') }}"></script>
+
     <!-- Import other scripts the html may need -->
     {% block scripts %} {% endblock %}
-
-    <!-- JQuery and Chosen for dropdown searching -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='js/chosen.jquery.min.js') }}"></script>
 
     <!-- CSS -->
     <link
@@ -33,13 +33,14 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/chosen.min.css') }}"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
     <!-- NavBar -->
-    <ul>
-      <li><a href="#" class="active">Question Bank</a></li>
-      <li><a href="{{ url_for('main.index') }}">Add Question</a></li>
-      <li><a href="{{ url_for('main.book') }}">Add to Book</a></li>
+    <ul class="navbar">
+      <li class="navbar"><a href="#" class="active">Question Bank</a></li>
+      <li class="navbar"><a href="{{ url_for('main.index') }}">Add Question</a></li>
+      <li class="navbar"><a href="{{ url_for('questions_frontend.get_all_questions') }}">Add to Book</a></li>
     </ul>
 
     {% block content %} {% endblock %}

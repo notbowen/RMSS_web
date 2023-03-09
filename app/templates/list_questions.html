@@ -1,0 +1,73 @@
+{% extends "search_question.html" %}
+{% block title %}Add Question{% endblock %}
+
+{% block questions %}
+    {% for question in questions %}
+        <div
+            class="question-editor"
+            id="{{ question.id }}"
+            onclick="on_select(this.id)"
+        >
+            <div onclick="event.stopPropagation()" id="{{ question.id }}">
+                <p>Question ID: {{ question.id }}</p>
+                <p>
+                    Category: {{ question.category.topic }} ({{ question.category.level }}, {{ question.category.subject }})
+                </p>
+            </div>
+
+            <div id="editorjs-{{ question.id }}"></div>
+            <div style="display: inline;">
+              <button
+                  onclick="location.href = 'edit?id={{ question.id }}'"
+                  class="button"
+                  id="edit-btn"
+                  style="display: inline;"
+              >
+                  Edit
+              </button>
+              <button
+                  onclick="on_delete('{{ question.id }}')"
+                  class="button"
+                  id="delete-btn"
+                  style="display: inline;"
+              >
+                Delete
+              </button>
+            </div>
+        </div>
+        <script>
+            new EditorJS({
+              holder: "editorjs-{{ question.id }}",
+              minHeight: 50,
+              tools: {
+                  paragraph: {
+                    class: Paragraph,
+                    inlineToolbar: ["bold", "italic"],
+                  },
+                  list: {
+                    class: List,
+                    inlineToolbar: true,
+                  },
+                  table: {
+                    class: Table,
+                    inlineToolbar: true,
+                  },
+                  image: {
+                    class: ImageTool,
+                    config: {
+                      endpoints: {
+                        byFile: "/api/image/upload_file",
+                        byUrl: "/api/image/upload_url",
+                      },
+                    },
+                    inlineToolbar: true,
+                  },
+                },
+              {% autoescape false %}
+              data: {{ question.content | replace("False", "false") | replace("True", "true") }},
+              {% endautoescape %}
+              readOnly: true
+            });
+        </script>
+    {% endfor %}
+{% endblock %}
