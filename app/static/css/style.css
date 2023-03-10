@@ -21,7 +21,7 @@
     z-index: -1;
 }
 
-#editorjs {
+.editorjs {
     margin-top: 8px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;

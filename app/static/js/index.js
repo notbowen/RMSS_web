@@ -1,6 +1,6 @@
 // EditorJS
-const editor = new EditorJS({
-    holder: "editorjs",
+const editor_question = new EditorJS({
+    holder: "editorjs_question",
     placeholder: "Enter question content here...",
     tools: {
         paragraph: {
@@ -28,8 +28,37 @@ const editor = new EditorJS({
     },
 });
 
+// EditorJS for answer
+const editor_answer = new EditorJS({
+    holder: "editorjs_answer",
+    placeholder: "Enter answer here...",
+    minHeight: 100,
+    tools: {
+        paragraph: {
+            class: Paragraph,
+            inlineToolbar: ["bold", "italic"],
+        },
+        list: {
+            class: List,
+            inlineToolbar: true,
+        },
+        table: {
+            class: Table,
+            inlineToolbar: true,
+        },
+    },
+});
+
 // Alert user if EditorJS fails to load
-editor.isReady
+editor_question.isReady
+    .then(() => {
+        console.log("EditorJS is ready to work!");
+    })
+    .catch((reason) => {
+        console.log("EditorJS initialization failed because of ", reason);
+    });
+
+editor_answer.isReady
     .then(() => {
         console.log("EditorJS is ready to work!");
     })
@@ -43,10 +72,21 @@ document.getElementById("save-btn").addEventListener("click", async () => {
     let response = {};
 
     // Get data from EditorJS
-    await editor
+    await editor_question
         .save()
         .then((outputData) => {
             response["content"] = outputData;
+        })
+        .catch((error) => {
+            console.log("Saving failed: ", error);
+            return;
+        });
+
+    // Get answer from EditorJS
+    await editor_answer
+        .save()
+        .then((outputData) => {
+            response["answer"] = outputData;
         })
         .catch((error) => {
             console.log("Saving failed: ", error);
@@ -83,10 +123,6 @@ document.getElementById("save-btn").addEventListener("click", async () => {
             .value;
     response["category_id"] = selected;
 
-    // Get answer
-    let answer = document.getElementById("answer").value;
-    response["answer"] = answer;
-
     // Debug
     console.log(response);
 
@@ -113,11 +149,9 @@ document.getElementById("save-btn").addEventListener("click", async () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
             alert("Question saved successfully!");
 
-            // Clear editor
-            editor.clear();
-                
-            // Clear answer
-            document.getElementById("answer").value = "";
+            // Clear editor and answer
+            editor_question.clear();
+            editor_answer.clear();
         }
     };
 

@@ -55,15 +55,30 @@ def save_question():
     except KeyError:
         response = {
             "success": 0,
-            "message": "Content cannot be empty"
+            "message": "Malformed content object!"
         }
         return jsonify(response), 400
 
     # Ensure answer is not empty
-    if question["answer"].strip() == "":
+    if not isinstance(question["answer"], dict):
         response = {
             "success": 0,
-            "message": "Answer cannot be empty"
+            "message": "Answer must be a JSON object"
+        }
+        return jsonify(response), 400
+    
+    # Ensure answer has at least 1 block
+    try:
+        if len(question["answer"]["blocks"]) == 0:
+            response = {
+                "success": 0,
+                "message": "Answer cannot be empty"
+            }
+            return jsonify(response), 400
+    except KeyError:
+        response = {
+            "success": 0,
+            "message": "Malformed answer object!"
         }
         return jsonify(response), 400
 

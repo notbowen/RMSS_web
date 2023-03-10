@@ -15,7 +15,8 @@
                 </p>
             </div>
 
-            <div id="editorjs-{{ question.id }}"></div>
+            <div id="question-{{ question.id }}" class="editorjs"></div>
+            <div id="answer-{{ question.id }}" class="editorjs"></div>
             <div style="display: inline;">
               <button
                   onclick="location.href = 'edit?id={{ question.id }}'"
@@ -37,7 +38,7 @@
         </div>
         <script>
             new EditorJS({
-              holder: "editorjs-{{ question.id }}",
+              holder: "question-{{ question.id }}",
               minHeight: 50,
               tools: {
                   paragraph: {
@@ -67,6 +68,30 @@
               data: {{ question.content | replace("False", "false") | replace("True", "true") }},
               {% endautoescape %}
               readOnly: true
+            });
+        </script>
+        <script>
+            new EditorJS({
+                holder: "answer-{{ question.id }}",
+                minHeight: 20,
+                tools: {
+                    paragraph: {
+                        class: Paragraph,
+                        inlineToolbar: ["bold", "italic"],
+                    },
+                    list: {
+                        class: List,
+                        inlineToolbar: true,
+                    },
+                    table: {
+                        class: Table,
+                        inlineToolbar: true,
+                    },
+                },
+                {% autoescape false %}
+                data: {{ question.answer | replace("False", "false") | replace("True", "true") }},
+                {% endautoescape %}
+                readOnly: true
             });
         </script>
     {% endfor %}
