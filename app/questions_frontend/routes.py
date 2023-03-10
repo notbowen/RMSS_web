@@ -12,6 +12,7 @@ def search_question():
     if len(request.args) == 0:
         return render_template("search_question.html", categories=categories)
 
+    # Get query string parameters
     section = request.args.get("section", None, type=str)
     category = request.args.get("category", None, type=int)
 
@@ -27,8 +28,3 @@ def search_question():
         questions = [q for q in questions if q.category_id == category]
 
     return render_template("list_questions.html", categories=categories, questions=questions)
-
-@bp.route("/all")
-def get_all_questions():
-    questions = Question.query.all()
-    return render_template("list_questions.html", questions=questions)
