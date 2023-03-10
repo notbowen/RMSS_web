@@ -4,15 +4,13 @@ from app.questions_frontend import bp
 from app.models.question import Question
 from app.models.category import Category
 
-@bp.route("/")
-def index():
-    """ Search page """
-    categories = Category.query.all()
-    return render_template("search_question.html", categories=categories)
-
 @bp.route("/search")
 def search_question():
     categories = Category.query.all()
+
+    # Return search page if no query string is provided
+    if len(request.args) == 0:
+        return render_template("search_question.html", categories=categories)
 
     section = request.args.get("section", None, type=str)
     category = request.args.get("category", None, type=int)
