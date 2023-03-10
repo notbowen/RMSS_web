@@ -11,8 +11,14 @@ with create_app().app_context():
     emi = Category(level="Secondary 4", subject="Physics", topic="Electromagnetic Induction")
     vec = Category(level="Secondary 4", subject="E Maths", topic="Vectors")
 
+    test1 = Category(level="Secondary 1", subject="Testing", topic="Test Topic 1")
+    test2 = Category(level="Secondary 1", subject="Testing", topic="Test Topic 2")
+
     db.session.add(pom)
     db.session.add(emi)
     db.session.add(vec)
+
+    db.session.add(test1)
+    db.session.add(test2)
 
     db.session.commit()
