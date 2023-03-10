@@ -108,19 +108,21 @@ document.getElementById("save-btn").addEventListener("click", async () => {
                 alert("Error connecting to server! Please try again later.");
             }
         }
+
+        // Alert user if save succeeded
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            alert("Question saved successfully!");
+
+            // Clear editor
+            editor.clear();
+                
+            // Clear answer
+            document.getElementById("answer").value = "";
+        }
     };
 
     // Send data to server
     xhr.send(JSON.stringify(response));
-
-    // Alert user if save was successful
-    alert("Question saved successfully!");
-
-    // Clear editor
-    editor.clear();
-
-    // Clear answer
-    document.getElementById("answer").value = "";
 });
 
 // Ensure that question id fields are not empty
