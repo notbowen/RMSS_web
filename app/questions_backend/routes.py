@@ -1,5 +1,5 @@
 from sqlalchemy import exc
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 
 from app.questions_backend import bp
 from app.extensions import db
@@ -227,3 +227,35 @@ def edit_question():
     }
 
     return jsonify(response), 200
+
+@bp.route("/delete", methods=["GET"])
+def delete_question():
+    """Delete question route
+
+    Accepts a POST request with a question id as query parameter
+    Deletes question from database
+
+    Returns a 200 OK if successful"""
+
+    # Get question id from request
+    question_id = request.args.get("id", None, type=str)
+
+    # Ensure question id is not empty
+    if question_id is None:
+        render_template("error.html", message="Question ID cannot be empty"), 400
+    
+    # Get question from database
+    question = Question.query.filter_by(id=question_id).first()
+
+    # Ensure question exists
+    if question is None:
+        return render_template("404.html"), 404
+    
+    # Delete question from database
+    try:
+        db.session.delete(question)
+        db.session.commit()
+    except Exception as e:
+        return render_template("error.html", message=str(e)), 400
+
+    return render_template("search_question.html"), 200
