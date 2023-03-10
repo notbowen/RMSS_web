@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Edit Question{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Editing {{ question.id }}</h1>
+    <div class="question-editor">
+        <div id="question_editor" class="editorjs"></div>
+        <div id="answer_editor" class="editorjs"></div>
+        <input type="submit" class="button" id="save-btn" value="Save"/>
+    </div>
+    <script>
+        const editor_question = new EditorJS({
+            holder: "question_editor",
+            minHeight: 100,
+            tools: {
+                paragraph: {
+                    class: Paragraph,
+                    inlineToolbar: ["bold", "italic"],
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                },
+                table: {
+                    class: Table,
+                    inlineToolbar: true,
+                },
+                image: {
+                    class: ImageTool,
+                    config: {
+                        endpoints: {
+                            byFile: "/api/image/upload_file",
+                            byUrl: "/api/image/upload_url",
+                        },
+                    },
+                    inlineToolbar: true,
+                },
+            },
+            {% autoescape false %}
+            data: {{ question.content | replace("False", "false") | replace("True", "true") }},
+            {% endautoescape %}
+        });
+
+        // EditorJS for answer
+        const editor_answer = new EditorJS({
+            holder: "answer_editor",
+            minHeight: 50,
+            tools: {
+                paragraph: {
+                    class: Paragraph,
+                    inlineToolbar: ["bold", "italic"],
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                },
+                table: {
+                    class: Table,
+                    inlineToolbar: true,
+                },
+            },
+            {% autoescape false %}
+            data: {{ question.answer | replace("False", "false") | replace("True", "true") }},
+            {% endautoescape %}
+        });
+
+        // Alert user if EditorJS fails to load
+        editor_question.isReady
+            .then(() => {
+                console.log("EditorJS is ready to work!");
+            })
+            .catch((reason) => {
+                console.log("EditorJS initialization failed because of ", reason);
+            });
+        
+        editor_answer.isReady
+            .then(() => {
+                console.log("EditorJS is ready to work!");
+            })
+            .catch((reason) => {
+                console.log("EditorJS initialization failed because of ", reason);
+            });
+
+        // Save button
+        document.getElementById("save-btn").addEventListener("click", async () => {
+            let response = {"id": "{{ question.id }}"};
+
+            await editor_question.save().then((outputData) => {
+                response["content"] = outputData;
+            }).catch((error) => {
+                console.log("Saving failed: ", error);
+            });
+
+            await editor_answer.save().then((outputData) => {
+                response["answer"] = outputData;
+            }).catch((error) => {
+                console.log("Saving failed: ", error);
+            });
+
+            // Send data to server
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = "json";
+            xhr.open("POST", "/api/question/edit", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert("Question saved!");
+                }
+
+                if (xhr.readyState === 4 && xhr.status !== 200) {
+                    try {
+                        alert("Failed to save question!\nError: " + xhr.response["message"]);
+                    } catch (e) {
+                        alert("Error connecting to server! Please try again later.");
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify(response));
+        });
+    </script>
+{% endblock %}

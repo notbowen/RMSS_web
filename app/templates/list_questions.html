@@ -19,7 +19,7 @@
             <div id="answer-{{ question.id }}" class="editorjs"></div>
             <div style="display: inline;">
               <button
-                  onclick="location.href = 'edit?id={{ question.id }}'"
+                  onclick="event.stopPropagation(); location.href='edit?id={{ question.id }}'"
                   class="button"
                   id="edit-btn"
                   style="display: inline;"
@@ -27,7 +27,7 @@
                   Edit
               </button>
               <button
-                  onclick="on_delete('{{ question.id }}')"
+                  onclick="event.stopPropagation(); on_delete('{{ question.id }}')"
                   class="button"
                   id="delete-btn"
                   style="display: inline;"

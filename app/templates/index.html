@@ -11,7 +11,7 @@
 {% block content %}
     <h1 style="text-align: center">Add Question</h1>
     <div class="question-editor">
-        <div onclick="event.stopPropagation()">
+        <div>
             <label for="qn-school">School</label>
             <input type="text" id="qn-school" maxlength="10" />
         
@@ -62,25 +62,14 @@
             <select id="qn-category">
                 {% for category in categories %}
                 <option value="{{ category.id }}">
-                    {{ category.topic }} ({{ category.level }}, {{ category.subject
-                    }})
+                    {{ category.topic }} ({{ category.level }}, {{ category.subject }})
                 </option>
                 {% endfor %}
             </select>
         </div>
     
-        <div class="editorjs" id="editorjs_question" onclick="event.stopPropagation()"></div>
-        <div
-            class="editorjs"
-            id="editorjs_answer"
-            onclick="event.stopPropagation()"
-        ></div>
-        <input
-            type="submit"
-            class="button"
-            id="save-btn"
-            value="Save"
-            onclick="event.stopPropagation()"
-        />
+        <div class="editorjs" id="editorjs_question"></div>
+        <div class="editorjs" id="editorjs_answer"></div>
+        <input type="submit" class="button" id="save-btn" value="Save"/>
     </div>
 {% endblock %}

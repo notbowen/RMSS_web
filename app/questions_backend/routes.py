@@ -116,3 +116,114 @@ def save_question():
     }
 
     return jsonify(response), 200
+
+@bp.route("/edit", methods=["POST"])
+def edit_question():
+    """Edit question route
+
+    Accepts a POST request with a question content
+    and answer in the body.
+    Edits question in database via ID provided
+
+    Returns a 200 OK if successful"""
+
+    # Get question from request
+    question_data = request.get_json()
+
+    # Ensure question has all required fields
+    required_fields = ["id", "content", "answer"]
+    for field in required_fields:
+        if field not in question_data:
+            response = {
+                "success": 0,
+                "message": f"Missing required field: {field}"
+            }
+            return jsonify(response), 400
+
+    # Ensure question id is not empty
+    if question_data["id"].strip() == "":
+        response = {
+            "success": 0,
+            "message": "Question id cannot be empty"
+        }
+        return jsonify(response), 400
+
+    # Ensure content is a JSON object
+    if not isinstance(question_data["content"], dict):
+        response = {
+            "success": 0,
+            "message": "Content must be a JSON object"
+        }
+        return jsonify(response), 400
+
+    # Ensure EditorJS has at least 1 block
+    try:
+        if len(question_data["content"]["blocks"]) == 0:
+            response = {
+                "success": 0,
+                "message": "Content cannot be empty"
+            }
+            return jsonify(response), 400
+    except KeyError:
+        response = {
+            "success": 0,
+            "message": "Malformed content object!"
+        }
+        return jsonify(response), 400
+
+    # Ensure answer is not empty
+    if not isinstance(question_data["answer"], dict):
+        response = {
+            "success": 0,
+            "message": "Answer must be a JSON object"
+        }
+        return jsonify(response), 400
+    
+    # Ensure answer has at least 1 block
+    try:
+        if len(question_data["answer"]["blocks"]) == 0:
+            response = {
+                "success": 0,
+                "message": "Answer cannot be empty"
+            }
+            return jsonify(response), 400
+    except KeyError:
+        response = {
+            "success": 0,
+            "message": "Malformed answer object!"
+        }
+        return jsonify(response), 400
+
+    # Get question from database
+    question = Question.query.filter_by(id=question_data["id"]).first()
+
+    # Ensure question exists
+    if question is None:
+        response = {
+            "success": 0,
+            "message": "Question does not exist"
+        }
+        return jsonify(response), 400
+
+    # Update question
+    question.content = question_data["content"]
+    question.answer = question_data["answer"]
+
+    # Commit changes to database
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        response = {
+            "success": 0,
+            "message": str(e)
+        }
+        return jsonify(response), 400
+    
+    # Craft JSON response
+    response = {
+        "success": 1,
+        "message": "Question edited successfully"
+    }
+
+    return jsonify(response), 200
