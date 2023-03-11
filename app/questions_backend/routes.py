@@ -1,9 +1,10 @@
 from sqlalchemy import exc
-from flask import request, jsonify, render_template
+from flask import request, jsonify, render_template, redirect, url_for
 
 from app.questions_backend import bp
 from app.extensions import db
 from app.models.question import Question
+from app.models.category import Category
 
 @bp.route("/save", methods=["POST"])
 def save_question():
@@ -240,6 +241,10 @@ def delete_question():
     # Get question id from request
     question_id = request.args.get("id", None, type=str)
 
+    # Get optional params from request
+    section = request.args.get("section", None, type=str)
+    category = request.args.get("category", None, type=int)
+
     # Ensure question id is not empty
     if question_id is None:
         render_template("error.html", message="Question ID cannot be empty"), 400
@@ -258,4 +263,14 @@ def delete_question():
     except Exception as e:
         return render_template("error.html", message=str(e)), 400
 
-    return render_template("search_question.html"), 200
+    # Redirect to list questions with specified params
+    if section is not None and category is not None:
+        return redirect(url_for("questions_frontend.search_question", section=section, category=category))
+    elif section is not None:
+        return redirect(url_for("questions_frontend.search_question", section=section))
+    elif category is not None:
+        return redirect(url_for("questions_frontend.search_question", category=category))
+    
+    # Redirect to search
+    categories = Category.query.all()
+    return render_template("search_question.html", categories=categories), 200

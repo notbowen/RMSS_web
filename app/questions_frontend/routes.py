@@ -32,7 +32,6 @@ def search_question():
 @bp.route("/edit", methods=["GET"])
 def edit_question():
     id = request.args.get("id", None, type=str)
-    print(id)
 
     # If no id is provided, redirect to index
     if id == None:

@@ -15,8 +15,25 @@ window.on_select = on_select;
 
 // On delete button click, ask for confirmation and delete selected questions
 function on_delete(id) {
-    if (confirm("Are you sure you want to delete this question?\nAction is irreversible!") === true) {
-        location.href = "/api/question/delete?id=" + id;
+    if (confirm("Are you sure you want to delete this question?\nAction is irreversible!\nQuestion ID: " + id) === true) {
+        // URL
+        let url = "/api/question/delete?id=" + id;
+
+        // Get search params
+        let section = new URLSearchParams(window.location.search).get("section");
+        let category = new URLSearchParams(window.location.search).get("category");
+
+        // If section is not empty, add it to the url
+        if (section !== null) {
+            url += "&section=" + section;
+        }
+
+        // If category is not empty, add it to the url
+        if (category !== null) {
+            url += "&category=" + category;
+        }
+
+        location.href = url;
     }
 }
 
