@@ -15,7 +15,12 @@ window.on_select = on_select;
 
 // On delete button click, ask for confirmation and delete selected questions
 function on_delete(id) {
-    if (confirm("Are you sure you want to delete this question?\nAction is irreversible!\nQuestion ID: " + id) === true) {
+    if (
+        confirm(
+            "Are you sure you want to delete this question?\nAction is irreversible!\nQuestion ID: " +
+                id
+        ) === true
+    ) {
         // URL
         let url = build_url_with_params("/api/question/delete?id=" + id);
         location.href = url;
@@ -54,7 +59,7 @@ function build_url_with_params(url) {
 }
 
 // On search button click, search for questions
-document.getElementById("search-btn").addEventListener("click", function() {
+document.getElementById("search-btn").addEventListener("click", function () {
     // Get value of section-select
     let section = document.getElementById("section-select").value;
 
@@ -83,5 +88,27 @@ document.getElementById("search-btn").addEventListener("click", function() {
 });
 
 // Add filtering to the selects
-$("#section-select").chosen({width: "65px"});
+$("#section-select").chosen({ width: "65px" });
 $("#category-select").chosen();
+
+// Slide div in and out on click
+$(document).ready(function () {
+    var slider_width = $(".selected-questions").width();
+    $("#toggle-sel-qns").click(function () {
+        if (
+            $(this).css("margin-right") == slider_width + "px" &&
+            !$(this).is(":animated")
+        ) {
+            $(".selected-questions,#toggle-sel-qns").animate({
+                "margin-right": "-=" + slider_width,
+            });
+        } else {
+            if (!$(this).is(":animated")) {
+                // prevent double click to double margin
+                $(".selected-questions,#toggle-sel-qns").animate({
+                    "margin-right": "+=" + slider_width,
+                });
+            }
+        }
+    });
+});

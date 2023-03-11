@@ -7,6 +7,7 @@
             class="question-editor"
             id="{{ question.id }}"
             onclick="on_select(this.id)"
+            style="cursor: pointer;"
         >
             <div onclick="event.stopPropagation()" id="{{ question.id }}">
                 <p>Question ID: {{ question.id }}</p>

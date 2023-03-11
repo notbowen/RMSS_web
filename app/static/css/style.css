@@ -4,6 +4,8 @@
     padding: 30px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .answer-field {
@@ -19,6 +21,34 @@
 .selected {
     background: #abe2ff;
     z-index: -1;
+}
+
+.sticky {
+    position: sticky;
+    top: 50px;
+}
+
+.selected-questions {
+    position:fixed;
+    height:100%;
+    background: #dcdcdc;
+    width:200px;
+    right:0px;
+    margin-right: -200px;
+    z-index: 10;
+}
+
+#toggle-sel-qns {
+    position:fixed;
+    cursor: pointer;
+    width:100px;
+    height:50px;
+    right:0px;
+    background:rgb(255, 158, 12);
+    top:300px;
+    z-index: 10;
+    text-align: center;
+    border-radius: 4px;
 }
 
 .editorjs {
