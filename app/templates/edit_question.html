@@ -105,7 +105,24 @@
 
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    alert("Question saved!");
+                    let url = "/questions/search"
+
+                    let section = new URLSearchParams(window.location.search).get("section");
+                    let category = new URLSearchParams(window.location.search).get("category");
+
+                    if (section !== null) {
+                        url += "?section=" + section;
+                    }
+
+                    if (category !== null) {
+                        if (section !== null) {
+                            url += "&category=" + category;
+                        } else {
+                            url += "?category=" + category;
+                        }
+                    }
+
+                    location.href = url;
                 }
 
                 if (xhr.readyState === 4 && xhr.status !== 200) {

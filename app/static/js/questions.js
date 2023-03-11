@@ -17,28 +17,41 @@ window.on_select = on_select;
 function on_delete(id) {
     if (confirm("Are you sure you want to delete this question?\nAction is irreversible!\nQuestion ID: " + id) === true) {
         // URL
-        let url = "/api/question/delete?id=" + id;
-
-        // Get search params
-        let section = new URLSearchParams(window.location.search).get("section");
-        let category = new URLSearchParams(window.location.search).get("category");
-
-        // If section is not empty, add it to the url
-        if (section !== null) {
-            url += "&section=" + section;
-        }
-
-        // If category is not empty, add it to the url
-        if (category !== null) {
-            url += "&category=" + category;
-        }
-
+        let url = build_url_with_params("/api/question/delete?id=" + id);
         location.href = url;
     }
 }
 
 // Make function global
 window.on_delete = on_delete;
+
+// On edit button click
+function on_edit(id) {
+    // URL
+    let url = build_url_with_params("/questions/edit?id=" + id);
+    location.href = url;
+}
+
+window.on_edit = on_edit;
+
+// Build URL with params
+function build_url_with_params(url) {
+    // Get search params
+    let section = new URLSearchParams(window.location.search).get("section");
+    let category = new URLSearchParams(window.location.search).get("category");
+
+    // If section is not empty, add it to the url
+    if (section !== null) {
+        url += "&section=" + section;
+    }
+
+    // If category is not empty, add it to the url
+    if (category !== null) {
+        url += "&category=" + category;
+    }
+
+    return url;
+}
 
 // On search button click, search for questions
 document.getElementById("search-btn").addEventListener("click", function() {
@@ -70,5 +83,5 @@ document.getElementById("search-btn").addEventListener("click", function() {
 });
 
 // Add filtering to the selects
-$("#section-select").chosen({width: "50px"});
+$("#section-select").chosen({width: "65px"});
 $("#category-select").chosen();

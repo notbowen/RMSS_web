@@ -11,7 +11,7 @@
     <div class="question_search">
         <label for="section-select">Section</label>
         <select id="section-select" data-placeholder=" ">
-            <option></option>
+            <option value="">None</option>
             <option value="A">A</option>
             <option value="B">B</option>
             <option value="C">C</option>
@@ -19,7 +19,7 @@
 
         <label for="category-select">Category</label>
         <select id="category-select" data-placeholder=" ">
-            <option></option>
+            <option value="">None</option>
             {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.topic }} ({{ category.subject }}, {{ category.level }})</option>
             {% endfor %}
@@ -27,6 +27,21 @@
 
         <button onclick="" class="button" id="search-btn"><i class="fa fa-search"></i></button>
     </div>
+
+    <script>
+        // Select section & category based on URL parameters
+        let urlParams = new URLSearchParams(window.location.search);
+        let section = urlParams.get('section');
+        let category = urlParams.get('category');
+
+        if (section) {
+            document.getElementById('section-select').value = section;
+        }
+
+        if (category) {
+            document.getElementById('category-select').value = category;
+        }
+    </script>
 
     {% block questions %}
     {% endblock %}
