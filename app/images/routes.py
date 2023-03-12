@@ -48,7 +48,7 @@ def upload_file():
         response = {
             "success": 1,
             "file": {
-                "url": current_app.config["UPLOAD_URL"] + filename
+                "url": current_app.config["UPLOAD_URL"] + "/" + filename
             }
         }
 

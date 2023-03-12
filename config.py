@@ -8,11 +8,10 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = "app/static/images"
+    UPLOAD_URL = "/static/images"
 
 class DevConfig(Config):
     DEBUG = True
-    UPLOAD_URL = "http://localhost:8080/static/images/"
 
 class ProdConfig(Config):
     DEBUG = False
-    UPLOAD_URL = "http://localhost:8080/static/images/"  # TODO: Change this
