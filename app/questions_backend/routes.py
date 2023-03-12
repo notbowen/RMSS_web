@@ -274,3 +274,27 @@ def delete_question():
     # Redirect to search
     categories = Category.query.all()
     return render_template("search_question.html", categories=categories), 200
+
+@bp.route("/export", methods=["POST"])
+def export_questions():
+    """Export questions route
+
+    Accepts a POST request with a list of question ids
+    Exports questions to a Word document
+
+    Returns a 200 OK if successful"""
+
+    # Get question ids from request
+    try:
+        question_ids = request.form["questions"]
+    except KeyError:
+        return "No questions provided!", 400
+    
+    # Ensure question ids is not empty
+    if len(question_ids) == 0:
+        return "No questions provided!", 400
+
+    # print(request.files)
+    
+    return "OK", 200
+    

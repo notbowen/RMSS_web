@@ -231,56 +231,53 @@ document.getElementById("export-btn").addEventListener("click", function () {
         localStorage.getItem("selected_questions")
     );
 
-    // If selected questions is not empty
-    if (selected_questions !== null && selected_questions.length > 0) {
-        // Create input element to store word document
-        let input = document.createElement("input");
-        input.type = "file";
-        input.accept = ".docx";
-        input.style.display = "none";
-        input.click();
+    // Reject if no questions are selected
+    if (selected_questions === null || selected_questions.length === 0) {
+        alert("Please select at least one question to export.");
+        return;
+    }
 
-        // On file selected
-        input.onchange = function () {
-            // Get file
-            let file = input.files[0];
+    // Create input element to store word document
+    let input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".docx";
+    input.style.display = "none";
+    input.click();
 
-            // If file is not empty
-            if (file !== null) {
-                // Create form data
-                let formData = new FormData();
-                formData.append("file", file);
+    // On file selected
+    input.onchange = function () {
+        // Get file
+        let file = input.files[0];
 
-                // Create XHR
-                let xhr = new XMLHttpRequest();
+        // Reject if file null
+        if (file === null) {
+            alert("Please select a word document to export to.");
+            return;
+        }
 
-                // On upload progress
-                xhr.upload.onprogress = function (e) {
-                    // If upload is complete
-                    if (e.loaded === e.total) {
-                        // Show success message
-                        alert("File uploaded successfully!");
-                    }
-                };
+        // Create form data
+        let formData = new FormData();
+        formData.append("document", file);
 
-                // On error
-                xhr.onerror = function (e) {
-                    // Show error message
-                    alert("An error occurred while uploading the file.");
-                };
+        // Add list of questions to form data
+        formData.append("questions", JSON.stringify(selected_questions));
 
-                // Open request
-                xhr.open("POST", "/api/question/export");
+        // Create request
+        let request = new XMLHttpRequest();
+        request.open("POST", "/api/question/export");
+        request.send(formData);
 
-                // Send request
-                xhr.send(formData);
-            } else {
-                // Show error message
-                alert("No file selected.");
+        // On response
+        request.onreadystatechange = function () {
+            if (request.readyState !== 4) {
+                return;
+            }
+
+            // If response is not ok
+            if (request.status !== 200) {
+                alert("Unable to export questions!\nError: " + request.responseText);
+                return;
             }
         }
-    } else {
-        // Show error message
-        alert("No questions selected.");
     }
 });
