@@ -4,9 +4,9 @@ function on_select(id) {
 
     // If the div is already selected, deselect it and vice-versa
     if (question_div.classList.contains("selected")) {
-        question_div.classList.remove("selected");
+        remove_question_by_id(id);
     } else {
-        question_div.classList.add("selected");
+        add_question_by_id(id);
     }
 }
 
@@ -112,3 +112,103 @@ $(document).ready(function () {
         }
     });
 });
+
+// Remove question from selected questions on click
+$(document).on("click", ".selected-questions p", function () {
+    // Get question id
+    let id = $(this).text();
+
+    // Ask user for confirmation
+    if (!confirm("Are you sure you want to remove " + id + " from the list of selected questions?")) {
+        return;
+    }
+
+    // Remove question from selected questions array
+    remove_question_by_id(id);
+});
+
+// Populate selected questions div with selected questions from local storage
+function populate_selected_questions() {
+    // Get selected questions from local storage
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+
+    // If selected questions is not empty
+    if (selected_questions !== null) {
+        // For each selected question
+        for (let i = 0; i < selected_questions.length; i++) {
+            // Get question id
+            let question_id = selected_questions[i];
+
+            // Get question div
+            let question_div = document.getElementById(question_id);
+
+            // If question div exists
+            if (question_div !== null) {
+                // Add selected class to question div
+                question_div.classList.add("selected");
+            }
+
+            // Add to selected questions div
+            let selected_questions_div = document.getElementById(
+                "selected-questions-list"
+            );
+            selected_questions_div.innerHTML += "<p>" + question_id + "</p>";
+        }
+    } else {
+        // Initialize selected questions array
+        localStorage.setItem("selected_questions", JSON.stringify([]));
+    }
+}
+
+function add_question_by_id(id) {
+    // Add question to selected questions array
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+    selected_questions.push(id);
+    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
+
+    // Add to selected questions div
+    let selected_questions_div = document.getElementById(
+        "selected-questions-list"
+    );
+    selected_questions_div.innerHTML += "<p>" + id + "</p>";
+
+    // Add selected class to question div
+    let question_div = document.getElementById(id);
+    if (question_div !== null) {
+        question_div.classList.add("selected");
+    }
+}
+
+function remove_question_by_id(id) {
+    // Remove question from selected questions array
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+    let index = selected_questions.indexOf(id);
+    if (index > -1) {
+        selected_questions.splice(index, 1);
+    }
+    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
+
+    // Remove from selected questions div
+    let selected_questions_div = document.getElementById(
+        "selected-questions-list"
+    );
+    selected_questions_div.innerHTML = selected_questions_div.innerHTML.replace(
+        "<p>" + id + "</p>",
+        ""
+    );
+
+    // Remove selected class from question div
+    let question_div = document.getElementById(id);
+    if (question_div !== null) {
+        question_div.classList.remove("selected");
+    }
+}
+
+// On page load, populate selected questions div
+populate_selected_questions();

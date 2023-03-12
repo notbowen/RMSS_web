@@ -30,12 +30,37 @@
 
 .selected-questions {
     position:fixed;
+    bottom: 0;
+    top: 0;
     height:100%;
     background: #dcdcdc;
-    width:200px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    width:300px;
     right:0px;
-    margin-right: -200px;
+    margin-right: -300px;
     z-index: 10;
+}
+
+.selected-questions p {
+    text-align: center;
+    background-color: #fcfcfc;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    width: 80%;
+    margin: auto;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.selected-questions p:hover {
+    background-color: #ff6666;
+}
+
+#selected-questions-list {
+    overflow-y: auto;
+    height: 90%;
 }
 
 #toggle-sel-qns {

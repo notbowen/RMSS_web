@@ -9,7 +9,7 @@
             onclick="on_select(this.id)"
             style="cursor: pointer;"
         >
-            <div onclick="event.stopPropagation()" id="{{ question.id }}">
+            <div id="{{ question.id }}">
                 <p>Question ID: {{ question.id }}</p>
                 <p>
                     Category: {{ question.category.topic }} ({{ question.category.level }}, {{ question.category.subject }})
