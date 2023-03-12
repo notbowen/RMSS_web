@@ -127,6 +127,62 @@ $(document).on("click", ".selected-questions p", function () {
     remove_question_by_id(id);
 });
 
+// Function to add a question to the selected questions array
+function add_question_by_id(id) {
+    // Add question to selected questions array
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+    selected_questions.push(id);
+    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
+
+    // Add to selected questions div
+    let selected_questions_div = document.getElementById(
+        "selected-questions-list"
+    );
+    selected_questions_div.innerHTML += "<p>" + id + "</p>";
+
+    // Add selected class to question div
+    let question_div = document.getElementById(id);
+    if (question_div !== null) {
+        question_div.classList.add("selected");
+    }
+
+    // Show number of selected questions
+    $("#sel-qns-h2").text(selected_questions.length + " Selected Question(s)");
+}
+
+// Function to remove a question from the selected questions array
+function remove_question_by_id(id) {
+    // Remove question from selected questions array
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+    let index = selected_questions.indexOf(id);
+    if (index > -1) {
+        selected_questions.splice(index, 1);
+    }
+    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
+
+    // Remove from selected questions div
+    let selected_questions_div = document.getElementById(
+        "selected-questions-list"
+    );
+    selected_questions_div.innerHTML = selected_questions_div.innerHTML.replace(
+        "<p>" + id + "</p>",
+        ""
+    );
+
+    // Remove selected class from question div
+    let question_div = document.getElementById(id);
+    if (question_div !== null) {
+        question_div.classList.remove("selected");
+    }
+
+    // Show number of selected questions
+    $("#sel-qns-h2").text(selected_questions.length + " Selected Question(s)");
+}
+
 // Populate selected questions div with selected questions from local storage
 function populate_selected_questions() {
     // Get selected questions from local storage
@@ -156,59 +212,75 @@ function populate_selected_questions() {
             );
             selected_questions_div.innerHTML += "<p>" + question_id + "</p>";
         }
+
+        // Show number of selected questions
+        $("#sel-qns-h2").text(selected_questions.length + " Selected Question(s)");
     } else {
         // Initialize selected questions array
         localStorage.setItem("selected_questions", JSON.stringify([]));
     }
 }
 
-function add_question_by_id(id) {
-    // Add question to selected questions array
-    let selected_questions = JSON.parse(
-        localStorage.getItem("selected_questions")
-    );
-    selected_questions.push(id);
-    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
-
-    // Add to selected questions div
-    let selected_questions_div = document.getElementById(
-        "selected-questions-list"
-    );
-    selected_questions_div.innerHTML += "<p>" + id + "</p>";
-
-    // Add selected class to question div
-    let question_div = document.getElementById(id);
-    if (question_div !== null) {
-        question_div.classList.add("selected");
-    }
-}
-
-function remove_question_by_id(id) {
-    // Remove question from selected questions array
-    let selected_questions = JSON.parse(
-        localStorage.getItem("selected_questions")
-    );
-    let index = selected_questions.indexOf(id);
-    if (index > -1) {
-        selected_questions.splice(index, 1);
-    }
-    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
-
-    // Remove from selected questions div
-    let selected_questions_div = document.getElementById(
-        "selected-questions-list"
-    );
-    selected_questions_div.innerHTML = selected_questions_div.innerHTML.replace(
-        "<p>" + id + "</p>",
-        ""
-    );
-
-    // Remove selected class from question div
-    let question_div = document.getElementById(id);
-    if (question_div !== null) {
-        question_div.classList.remove("selected");
-    }
-}
-
 // On page load, populate selected questions div
 populate_selected_questions();
+
+// When export to word button is pressed
+document.getElementById("export-btn").addEventListener("click", function () {
+    // Get selected questions from local storage
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+
+    // If selected questions is not empty
+    if (selected_questions !== null && selected_questions.length > 0) {
+        // Create input element to store word document
+        let input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".docx";
+        input.style.display = "none";
+        input.click();
+
+        // On file selected
+        input.onchange = function () {
+            // Get file
+            let file = input.files[0];
+
+            // If file is not empty
+            if (file !== null) {
+                // Create form data
+                let formData = new FormData();
+                formData.append("file", file);
+
+                // Create XHR
+                let xhr = new XMLHttpRequest();
+
+                // On upload progress
+                xhr.upload.onprogress = function (e) {
+                    // If upload is complete
+                    if (e.loaded === e.total) {
+                        // Show success message
+                        alert("File uploaded successfully!");
+                    }
+                };
+
+                // On error
+                xhr.onerror = function (e) {
+                    // Show error message
+                    alert("An error occurred while uploading the file.");
+                };
+
+                // Open request
+                xhr.open("POST", "/api/question/export");
+
+                // Send request
+                xhr.send(formData);
+            } else {
+                // Show error message
+                alert("No file selected.");
+            }
+        }
+    } else {
+        // Show error message
+        alert("No questions selected.");
+    }
+});

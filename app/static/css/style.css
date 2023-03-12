@@ -60,7 +60,7 @@
 
 #selected-questions-list {
     overflow-y: auto;
-    height: 90%;
+    height: 85%;
 }
 
 #toggle-sel-qns {
@@ -113,6 +113,13 @@
     width: 50px;
     display: inline;
     margin-left: 20px;
+}
+
+#export-btn {
+    background-color: #35c2ff;
+    width: 70%;
+    margin: auto;
+    margin-bottom: 10px;
 }
 
 .question_search {

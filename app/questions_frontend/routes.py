@@ -8,13 +8,13 @@ from app.models.category import Category
 def search_question():
     categories = Category.query.all()
 
-    # Return search page if no query string is provided
-    if len(request.args) == 0:
-        return render_template("search_question.html", categories=categories)
-
     # Get query string parameters
     section = request.args.get("section", None, type=str)
     category = request.args.get("category", None, type=int)
+
+    # Return search page if no query string is provided
+    if section is None and category is None:
+        return render_template("search_question.html", categories=categories)
 
     # Get all questions
     questions = Question.query.all()
