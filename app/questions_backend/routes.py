@@ -1,3 +1,6 @@
+import ast
+import docx
+
 from sqlalchemy import exc
 from flask import request, jsonify, render_template, redirect, url_for
 
@@ -290,11 +293,35 @@ def export_questions():
     except KeyError:
         return "No questions provided!", 400
     
+    # Turn question ids into a list
+    try:
+        question_ids = ast.literal_eval(question_ids)
+    except:
+        return "Unable to parse question IDs!", 400
+    
     # Ensure question ids is not empty
     if len(question_ids) == 0:
         return "No questions provided!", 400
 
-    # print(request.files)
-    
+    # Get questions from database
+    questions = []
+    for question_id in question_ids:
+        question = Question.query.filter_by(id=question_id).first()
+        if question is not None:
+            questions.append(question)
+        else:
+            return f"Question with ID: {question_id} does not exist!", 400
+
+    # Get Word document
+    try:
+        doc = docx.Document(request.files["document"])
+    except KeyError:
+        return "No file provided!", 400
+
+    # Loop through questions and parse to Word document
+    for question in questions:
+        # TODO: Create function to parse question content & answer to Word document
+        pass
+
     return "OK", 200
     
