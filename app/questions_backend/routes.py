@@ -1,13 +1,17 @@
 import ast
+from io import BytesIO
 import docx
+from docxcompose.composer import Composer
 
 from sqlalchemy import exc
-from flask import request, jsonify, render_template, redirect, url_for
+from flask import request, jsonify, render_template, redirect, send_file, url_for
 
 from app.questions_backend import bp
 from app.extensions import db
 from app.models.question import Question
 from app.models.category import Category
+
+from app.questions_backend import word
 
 @bp.route("/save", methods=["POST"])
 def save_question():
@@ -315,13 +319,35 @@ def export_questions():
     # Get Word document
     try:
         doc = docx.Document(request.files["document"])
+        filename = request.files["document"].filename
     except KeyError:
         return "No file provided!", 400
 
-    # Loop through questions and parse to Word document
-    for question in questions:
-        # TODO: Create function to parse question content & answer to Word document
-        pass
+    # Create a new docx to store the output
+    doc_with_questions = docx.Document()
 
+    # Set document styling for the rest
+    doc.styles["Normal"].font.name = "Arial"
+    doc.styles["Normal"].font.size = docx.shared.Pt(12)
+
+    # Sort question by section
+    questions_by_section = {"A": [], "B": [], "C": []}
+    for question in questions:
+        questions_by_section[question.section].append(question)
+
+    # Parse questions into Word document
+    word.parse_questions(questions_by_section, doc_with_questions)
+
+    # Combine user uploaded Word document with document containing questions
+    composer = Composer(doc)
+    composer.append(doc_with_questions)
+
+    # f = BytesIO()
+    # composer.save(f)
+
+    composer.save("output.docx")
+
+    # Send Word document to user
+    # return send_file(f, as_attachment=True, download_name=filename)
     return "OK", 200
     
