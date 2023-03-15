@@ -13,6 +13,7 @@ from app.models.category import Category
 
 from app.questions_backend import word
 
+
 @bp.route("/save", methods=["POST"])
 def save_question():
     """Save question route
@@ -74,7 +75,7 @@ def save_question():
             "message": "Answer must be a JSON object"
         }
         return jsonify(response), 400
-    
+
     # Ensure answer has at least 1 block
     try:
         if len(question["answer"]["blocks"]) == 0:
@@ -116,7 +117,6 @@ def save_question():
         }
         return jsonify(response), 400
 
-
     # Craft JSON response
     response = {
         "success": 1,
@@ -124,6 +124,7 @@ def save_question():
     }
 
     return jsonify(response), 200
+
 
 @bp.route("/edit", methods=["POST"])
 def edit_question():
@@ -186,7 +187,7 @@ def edit_question():
             "message": "Answer must be a JSON object"
         }
         return jsonify(response), 400
-    
+
     # Ensure answer has at least 1 block
     try:
         if len(question_data["answer"]["blocks"]) == 0:
@@ -227,7 +228,7 @@ def edit_question():
             "message": str(e)
         }
         return jsonify(response), 400
-    
+
     # Craft JSON response
     response = {
         "success": 1,
@@ -235,6 +236,7 @@ def edit_question():
     }
 
     return jsonify(response), 200
+
 
 @bp.route("/delete", methods=["GET"])
 def delete_question():
@@ -254,15 +256,16 @@ def delete_question():
 
     # Ensure question id is not empty
     if question_id is None:
-        render_template("error.html", message="Question ID cannot be empty"), 400
-    
+        render_template(
+            "error.html", message="Question ID cannot be empty"), 400
+
     # Get question from database
     question = Question.query.filter_by(id=question_id).first()
 
     # Ensure question exists
     if question is None:
         return render_template("404.html"), 404
-    
+
     # Delete question from database
     try:
         db.session.delete(question)
@@ -277,10 +280,11 @@ def delete_question():
         return redirect(url_for("questions_frontend.search_question", section=section))
     elif category is not None:
         return redirect(url_for("questions_frontend.search_question", category=category))
-    
+
     # Redirect to search
     categories = Category.query.all()
     return render_template("search_question.html", categories=categories), 200
+
 
 @bp.route("/export", methods=["POST"])
 def export_questions():
@@ -296,13 +300,13 @@ def export_questions():
         question_ids = request.form["questions"]
     except KeyError:
         return "No questions provided!", 400
-    
+
     # Turn question ids into a list
     try:
         question_ids = ast.literal_eval(question_ids)
     except:
         return "Unable to parse question IDs!", 400
-    
+
     # Ensure question ids is not empty
     if len(question_ids) == 0:
         return "No questions provided!", 400
@@ -342,12 +346,9 @@ def export_questions():
     composer = Composer(doc)
     composer.append(doc_with_questions)
 
-    # f = BytesIO()
-    # composer.save(f)
-
-    composer.save("output.docx")
+    f = BytesIO()
+    composer.save(f)
+    f.seek(0)
 
     # Send Word document to user
-    # return send_file(f, as_attachment=True, download_name=filename)
-    return "OK", 200
-    
+    return send_file(f, as_attachment=True, download_name=filename), 200

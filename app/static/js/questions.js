@@ -159,9 +159,11 @@ function remove_question_by_id(id) {
         localStorage.getItem("selected_questions")
     );
     let index = selected_questions.indexOf(id);
-    if (index > -1) {
-        selected_questions.splice(index, 1);
+    if (index === -1) {
+        alert("Error: Unable to remove ID: " + id + "!");
+        return;
     }
+    selected_questions.splice(index, 1);
     localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
 
     // Remove from selected questions div
@@ -251,7 +253,7 @@ document.getElementById("export-btn").addEventListener("click", function () {
 
         // Reject if file null
         if (file === null) {
-            alert("Please select a word document to export to.");
+            alert("Please select a word document to add to.");
             return;
         }
 
@@ -264,20 +266,38 @@ document.getElementById("export-btn").addEventListener("click", function () {
 
         // Create request
         let request = new XMLHttpRequest();
-        request.open("POST", "/api/question/export");
-        request.send(formData);
+        request.responseType = "blob";
+        request.open("POST", "/api/question/export", true);
 
         // On response
         request.onreadystatechange = function () {
-            if (request.readyState !== 4) {
+            if (request.readyState !== 4) return;
+
+            // If response is not ok
+            if (request.status === 400) {
+                alert("Unable to export questions!");
                 return;
             }
 
-            // If response is not ok
-            if (request.status !== 200) {
-                alert("Unable to export questions!\nError: " + request.responseText);
-                return;
+            // If response is ok
+            if (request.status === 200 || request.status === 0) {
+                const blob = new Blob([request.response]);
+                const url = window.URL.createObjectURL(blob);
+
+                // Create link element
+                let link = document.createElement("a");
+                link.href = url;
+                link.download = "questions.docx";
+                link.click();
+
+                // Remove url and link
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    link.remove();
+                }, 100);
             }
         }
+
+        request.send(formData);
     }
 });
