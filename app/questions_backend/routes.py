@@ -322,33 +322,54 @@ def export_questions():
         else:
             return f"Question with ID: {question_id} does not exist!", 400
 
+    # Get document filename
+    try:
+        filename = request.files["document"].filename
+    except KeyError:
+        return "No document provided!", 400
+
+    # Reject if file is not a Word document
+    if not filename.endswith(".docx"):
+        return "File must end with .docx!", 400
+
     # Get Word document
     try:
         doc = docx.Document(request.files["document"])
-        filename = request.files["document"].filename
     except KeyError:
         return "No file provided!", 400
 
     # Create a new docx to store the output
     doc_with_questions = docx.Document()
 
-    # Set document styling
-    style = doc.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
-    style.font.name = "Arial"
-    style.font.size = docx.shared.Pt(12)
+    # Set document styling, skip if style already exists
+    try:
+        style = doc.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
+        style.font.name = "Arial"
+        style.font.size = docx.shared.Pt(12)
+    except:
+        pass
 
-    style = doc.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
-    style.font.name = "Arial"
-    style.font.size = docx.shared.Pt(28)
+    try:
+        style = doc.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
+        style.font.name = "Arial"
+        style.font.size = docx.shared.Pt(28)
+    except:
+        pass
 
-    # Add same style to question doc
-    style = doc_with_questions.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
-    style.font.name = "Arial"
-    style.font.size = docx.shared.Pt(12)
+    # Add same style to question doc, skip if style already exists
+    try:
+        style = doc_with_questions.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
+        style.font.name = "Arial"
+        style.font.size = docx.shared.Pt(12)
+    except:
+        pass
 
-    style = doc_with_questions.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
-    style.font.name = "Arial"
-    style.font.size = docx.shared.Pt(28)
+    try:
+        style = doc_with_questions.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
+        style.font.name = "Arial"
+        style.font.size = docx.shared.Pt(28)
+    except:
+        pass
 
     # Sort question by section
     questions_by_section = {"A": [], "B": [], "C": []}
