@@ -3,14 +3,6 @@ const editor_question = new EditorJS({
     holder: "editorjs_question",
     placeholder: "Enter question content here...",
     tools: {
-        paragraph: {
-            class: Paragraph,
-            inlineToolbar: ["bold", "italic"],
-        },
-        list: {
-            class: List,
-            inlineToolbar: true,
-        },
         table: {
             class: Table,
             inlineToolbar: true,
@@ -32,21 +24,7 @@ const editor_question = new EditorJS({
 const editor_answer = new EditorJS({
     holder: "editorjs_answer",
     placeholder: "Enter answer here...",
-    minHeight: 100,
-    tools: {
-        paragraph: {
-            class: Paragraph,
-            inlineToolbar: ["bold", "italic"],
-        },
-        list: {
-            class: List,
-            inlineToolbar: true,
-        },
-        table: {
-            class: Table,
-            inlineToolbar: true,
-        },
-    },
+    minHeight: 100
 });
 
 // Alert user if EditorJS fails to load

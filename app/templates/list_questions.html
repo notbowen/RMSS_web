@@ -42,14 +42,6 @@
               holder: "question-{{ question.id }}",
               minHeight: 50,
               tools: {
-                  paragraph: {
-                    class: Paragraph,
-                    inlineToolbar: ["bold", "italic"],
-                  },
-                  list: {
-                    class: List,
-                    inlineToolbar: true,
-                  },
                   table: {
                     class: Table,
                     inlineToolbar: true,
@@ -75,20 +67,6 @@
             new EditorJS({
                 holder: "answer-{{ question.id }}",
                 minHeight: 20,
-                tools: {
-                    paragraph: {
-                        class: Paragraph,
-                        inlineToolbar: ["bold", "italic"],
-                    },
-                    list: {
-                        class: List,
-                        inlineToolbar: true,
-                    },
-                    table: {
-                        class: Table,
-                        inlineToolbar: true,
-                    },
-                },
                 {% autoescape false %}
                 data: {{ question.answer | replace("False", "false") | replace("True", "true") }},
                 {% endautoescape %}

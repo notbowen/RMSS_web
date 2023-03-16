@@ -13,14 +13,6 @@
             holder: "question_editor",
             minHeight: 100,
             tools: {
-                paragraph: {
-                    class: Paragraph,
-                    inlineToolbar: ["bold", "italic"],
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true,
-                },
                 table: {
                     class: Table,
                     inlineToolbar: true,
@@ -45,20 +37,6 @@
         const editor_answer = new EditorJS({
             holder: "answer_editor",
             minHeight: 50,
-            tools: {
-                paragraph: {
-                    class: Paragraph,
-                    inlineToolbar: ["bold", "italic"],
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true,
-                },
-                table: {
-                    class: Table,
-                    inlineToolbar: true,
-                },
-            },
             {% autoescape false %}
             data: {{ question.answer | replace("False", "false") | replace("True", "true") }},
             {% endautoescape %}
