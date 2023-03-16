@@ -40,6 +40,10 @@ class HTMLHelper(object):
                 run.bold = True
             elif run_item[1] == "<i>":
                 run.italic = True
+            elif run_item[1] == "<u>":
+                run.underline = True
+            elif run_item[1] == "<s>":
+                run.superscript = True
 
 
 def parse_questions(questions: Dict[str, List[Question]], doc: docx.Document) -> None:
@@ -83,9 +87,6 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
     prev_root.paragraph_format.left_indent = docx.shared.Cm(0.5)
     prev_root.style = doc.styles["Question"]
 
-    # Initialise HTML helper
-    html_helper = HTMLHelper()
-
     # Loop through and add questions
     for i, question in enumerate(questions):
         # Add question number
@@ -97,12 +98,17 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
             root.style = doc.styles["Question"]
 
         # Add question
-        for block in question.content["blocks"]:
+        for j, block in enumerate(question.content["blocks"]):
             if block["type"] == "paragraph":
-                text = process_text(block["data"]["text"])  # Process text
-                run_map = html_helper.html_to_run_map(text)
-                html_helper.insert_runs_from_html_map(root, run_map)  # Add text to paragraph
-                root.add_run("\n\n")  # Add new line
+                if j != len(question.content["blocks"]) - 1:
+                    is_next_table = question.content["blocks"][j + 1]["type"] == "table"
+                    add_text(block["data"]["text"], root, is_last=False, is_next_table=is_next_table)
+                else:
+                    add_text(block["data"]["text"], root, is_last=True)
+            elif block["type"] == "image":
+                add_image(block, root)
+            elif block["type"] == "table":
+                add_table(block, doc)
 
         # Make paragraph a list to have numbering
         if i != 0:
@@ -176,7 +182,7 @@ def add_mcq_answers(questions: List[Question], doc: docx.Document) -> None:
             paragraphs = cell.paragraphs
             for paragraph in paragraphs:
                 for run in paragraph.runs:
-                    run.font.name = 'Arial'
+                    run.font.name = "Arial"
                     run.font.size = docx.shared.Pt(20)
                     paragraph.paragraph_format.alignment = 1
 
@@ -203,6 +209,95 @@ def add_structured_answers(questions: List[Question], doc: docx.Document) -> Non
 
     pass
 
+def add_text(text: str, paragraph: docx.text.paragraph.Paragraph, is_last=False, is_table=False, is_next_table=False) -> None:
+    """Add text to a paragraph
+
+    Args:
+        block (Dict[str, str]): EditorJS block to add
+        paragraph (docx.text.paragraph.Paragraph): Paragraph to add to
+    """
+
+    # Initialise HTML helper
+    html_helper = HTMLHelper()
+    
+    # Process text
+    text = process_text(text)
+    run_map = html_helper.html_to_run_map(text)
+
+    # Add text to paragraph and add new line if not a table
+    html_helper.insert_runs_from_html_map(paragraph, run_map)
+
+    if is_table or is_next_table:
+        return
+
+    if not is_last:
+        paragraph.add_run("\n\n")
+    else:
+        paragraph.add_run("\n")
+
+def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -> None:
+    """Add image to a paragraph
+
+    NOTE: The image is not aligned to the centre, but rather
+    padded with spaces to the left to make it not touch the left.
+
+    Args:
+        block (Dict[str, str]): EditorJS block to add
+        paragraph (docx.text.paragraph.Paragraph): Paragraph to add to
+    """
+
+    # Get image path
+    image_path = block["data"]["file"]["url"]
+    rel_path = "./app" + image_path
+
+    # Add image
+    image = paragraph.add_run("    ")
+    image.add_picture(rel_path, width=docx.shared.Cm(13))
+
+    # Add new line
+    paragraph.add_run("\n\n")
+
+def add_table(block, doc) -> None:
+    # Check if withHeadings is true
+    # TODO: Check if withHeadings is a boolean or string
+    try:
+        with_headings = block["data"]["withHeadings"]
+    except KeyError:
+        with_headings = False
+
+    # Get table data
+    table_data = block["data"]["content"]
+
+    # Create table and set style
+    table = doc.add_table(rows=len(table_data), cols=len(table_data[0]))
+    table.style = "Table Grid"
+
+    # Add indent to table
+    tbl_pr = table._tblPr
+    e = OxmlElement("w:tblInd")
+    e.set(qn("w:w"), "350")  # TODO: Find the correct value
+    e.set(qn("w:type"), "dxa")
+    tbl_pr.append(e)
+
+    # Add table data
+    for i, row in enumerate(table_data):
+        for j, cell in enumerate(row):
+            # Set paragraph style
+            p = table.cell(i, j).paragraphs[0]
+            p.style = doc.styles["Question"]
+            p.paragraph_format.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+
+            # Add text to cell
+            add_text(cell, p, is_table=True)
+
+    # Shade first row if withHeadings is true
+    if with_headings:
+        for cell in table.rows[0].cells:
+            set_table_header_bg_color(cell)
+
+    # Add new line
+    doc.add_paragraph("\n")
+
 def process_text(text: str) -> str:
     text = text.replace("&nbsp;", " ")
     text = text.replace("<br>", "\n")
@@ -227,6 +322,11 @@ def sanitise_mcq_answer(answer: str) -> str:
     answer = answer.replace("</b>", "")
     answer = answer.replace("<i>", "")
     answer = answer.replace("</i>", "")
+    answer = answer.replace("<s>", "")
+    answer = answer.replace("</s>", "")
+    answer = answer.replace("<u>", "")
+    answer = answer.replace("</u>", "")
+    answer = answer.replace("&nbsp;", "")
 
     return answer
 
@@ -254,3 +354,11 @@ def insertHR(paragraph: docx.text.paragraph.Paragraph):
     bottom.set(qn('w:space'), '1')
     bottom.set(qn('w:color'), 'auto')
     pBdr.append(bottom)
+
+def set_table_header_bg_color(cell):
+    tblCell = cell._tc
+    tblCellProperties = tblCell.get_or_add_tcPr()
+    clShading = OxmlElement('w:shd')
+    clShading.set(qn('w:fill'), "707070")
+    tblCellProperties.append(clShading)
+    return cell
