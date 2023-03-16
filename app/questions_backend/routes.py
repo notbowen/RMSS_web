@@ -1,6 +1,8 @@
 import ast
 from io import BytesIO
+
 import docx
+from docx.enum.style import WD_STYLE_TYPE
 from docxcompose.composer import Composer
 
 from sqlalchemy import exc
@@ -330,9 +332,23 @@ def export_questions():
     # Create a new docx to store the output
     doc_with_questions = docx.Document()
 
-    # Set document styling for the rest
-    doc.styles["Normal"].font.name = "Arial"
-    doc.styles["Normal"].font.size = docx.shared.Pt(12)
+    # Set document styling
+    style = doc.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
+    style.font.name = "Arial"
+    style.font.size = docx.shared.Pt(12)
+
+    style = doc.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
+    style.font.name = "Arial"
+    style.font.size = docx.shared.Pt(28)
+
+    # Add same style to question doc
+    style = doc_with_questions.styles.add_style("Question", WD_STYLE_TYPE.PARAGRAPH)
+    style.font.name = "Arial"
+    style.font.size = docx.shared.Pt(12)
+
+    style = doc_with_questions.styles.add_style("Answer Heading", WD_STYLE_TYPE.PARAGRAPH)
+    style.font.name = "Arial"
+    style.font.size = docx.shared.Pt(28)
 
     # Sort question by section
     questions_by_section = {"A": [], "B": [], "C": []}
