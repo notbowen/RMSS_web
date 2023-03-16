@@ -21,6 +21,9 @@ function on_delete(id) {
                 id
         ) === true
     ) {
+        // Remove question from selected questions array (if there is)
+        remove_question_by_id(id);
+
         // URL
         let url = build_url_with_params("/api/question/delete?id=" + id);
         location.href = url;
@@ -160,7 +163,7 @@ function remove_question_by_id(id) {
     );
     let index = selected_questions.indexOf(id);
     if (index === -1) {
-        alert("Error: Unable to remove ID: " + id + "!");
+        console.log("Unable to find question with id " + id + " in selected questions array.")
         return;
     }
     selected_questions.splice(index, 1);
