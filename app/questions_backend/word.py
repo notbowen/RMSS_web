@@ -40,10 +40,6 @@ class HTMLHelper(object):
                 run.bold = True
             elif run_item[1] == "<i>":
                 run.italic = True
-            elif run_item[1] == "<u>":
-                run.underline = True
-            elif run_item[1] == "<s>":
-                run.superscript = True
 
 
 def parse_questions(questions: Dict[str, List[Question]], doc: docx.Document) -> None:
@@ -81,7 +77,7 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
     # Return if no questions
     if len(questions) == 0:
         return
-    
+
     # Add "root" paragraph
     prev_root = doc.add_paragraph()
     prev_root.paragraph_format.left_indent = docx.shared.Cm(0.5)
@@ -138,7 +134,7 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
             list_number(doc, root, prev=prev_root)
         else:
             list_number(doc, root)
-            
+
     # Add page break
     doc.add_page_break()
 
@@ -151,7 +147,7 @@ def parse_structured_question(questions: List[Question], doc: docx.Document) -> 
         question (Question): Structured Question to parse
         doc (docx.Document): docx document to write to
     """
-    
+
     # Return if no questions
     if len(questions) == 0:
         return
@@ -185,7 +181,7 @@ def add_mcq_answers(questions: List[Question], doc: docx.Document) -> None:
 
     # Align table to centre
     answer_table.alignment = docx.enum.table.WD_TABLE_ALIGNMENT.CENTER
-    
+
     # Calculate total rows to be in table
     num_questions = len(questions)
     total_rows = math.ceil(num_questions / 2)
@@ -195,12 +191,14 @@ def add_mcq_answers(questions: List[Question], doc: docx.Document) -> None:
         # Add "left" column
         row_cells = answer_table.add_row().cells
         row_cells[0].text = str(i + 1)
-        row_cells[1].text = sanitise_mcq_answer(questions[i].answer["blocks"][0]["data"]["text"])
+        row_cells[1].text = sanitise_mcq_answer(
+            questions[i].answer["blocks"][0]["data"]["text"])
 
         # Add "right" column if total qns are not odd
         if (i + total_rows) < num_questions:
             row_cells[2].text = str(i + 1 + total_rows)
-            row_cells[3].text = sanitise_mcq_answer(questions[i].answer["blocks"][0]["data"]["text"])
+            row_cells[3].text = sanitise_mcq_answer(
+                questions[i].answer["blocks"][0]["data"]["text"])
 
     # Style the table
     for row in answer_table.rows:
@@ -235,6 +233,7 @@ def add_structured_answers(questions: List[Question], doc: docx.Document) -> Non
 
     pass
 
+
 def add_text(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -> None:
     """Add text to a paragraph
 
@@ -251,7 +250,7 @@ def add_text(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) ->
 
     # Add text to paragraph
     add_text_from_str(block["data"]["text"], paragraph, alignment=alignment)
-    
+
 
 def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, alignment: str = "left") -> None:
     """Add text to a paragraph
@@ -263,7 +262,7 @@ def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, align
 
     # Initialise HTML helper
     html_helper = HTMLHelper()
-    
+
     # Process text
     text = process_text(text)
     run_map = html_helper.html_to_run_map(text)
@@ -278,6 +277,7 @@ def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, align
         paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.RIGHT
     elif alignment == "center":
         paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+
 
 def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -> None:
     """Add image to a paragraph
@@ -300,6 +300,7 @@ def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -
 
     # Align image to centre
     paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+
 
 def add_table(block, doc) -> None:
     # Remove last paragraph to prevent newline above table
@@ -351,13 +352,18 @@ def add_table(block, doc) -> None:
         for cell in table.rows[0].cells:
             set_table_header_bg_color(cell)
 
+
 def process_text(text: str) -> str:
     text = text.replace("&nbsp;", " ")
+    text = text.replace("\n", " ")  # WARN: Idk if this will break the code but \n usually shouldn't appear
+                                    # \n usually appears in the most random places when pasting from Word docx
+                                    # EditorJS only represents line breaks as <br> tags
     text = text.replace("<br>", "\n")
     text = text.replace("<b></b>", "")
     text = text.strip("\n")
 
     return text
+
 
 def sanitise_mcq_answer(answer: str) -> str:
     """Sanitise the answer for the MCQ question
@@ -383,6 +389,7 @@ def sanitise_mcq_answer(answer: str) -> str:
 
     return answer
 
+
 def insertHR(paragraph: docx.text.paragraph.Paragraph):
     """ Insert a horizontal rule at the end of the paragraph.
 
@@ -393,20 +400,21 @@ def insertHR(paragraph: docx.text.paragraph.Paragraph):
     pPr = p.get_or_add_pPr()
     pBdr = OxmlElement('w:pBdr')
     pPr.insert_element_before(pBdr,
-        'w:shd', 'w:tabs', 'w:suppressAutoHyphens', 'w:kinsoku', 'w:wordWrap',
-        'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE', 'w:autoSpaceDN',
-        'w:bidi', 'w:adjustRightInd', 'w:snapToGrid', 'w:spacing', 'w:ind',
-        'w:contextualSpacing', 'w:mirrorIndents', 'w:suppressOverlap', 'w:jc',
-        'w:textDirection', 'w:textAlignment', 'w:textboxTightWrap',
-        'w:outlineLvl', 'w:divId', 'w:cnfStyle', 'w:rPr', 'w:sectPr',
-        'w:pPrChange'
-    )
+                              'w:shd', 'w:tabs', 'w:suppressAutoHyphens', 'w:kinsoku', 'w:wordWrap',
+                              'w:overflowPunct', 'w:topLinePunct', 'w:autoSpaceDE', 'w:autoSpaceDN',
+                              'w:bidi', 'w:adjustRightInd', 'w:snapToGrid', 'w:spacing', 'w:ind',
+                              'w:contextualSpacing', 'w:mirrorIndents', 'w:suppressOverlap', 'w:jc',
+                              'w:textDirection', 'w:textAlignment', 'w:textboxTightWrap',
+                              'w:outlineLvl', 'w:divId', 'w:cnfStyle', 'w:rPr', 'w:sectPr',
+                              'w:pPrChange'
+                              )
     bottom = OxmlElement('w:bottom')
     bottom.set(qn('w:val'), 'single')
     bottom.set(qn('w:sz'), '6')
     bottom.set(qn('w:space'), '1')
     bottom.set(qn('w:color'), 'auto')
     pBdr.append(bottom)
+
 
 def set_table_header_bg_color(cell):
     tblCell = cell._tc
@@ -415,6 +423,7 @@ def set_table_header_bg_color(cell):
     clShading.set(qn('w:fill'), "D9D9D9")
     tblCellProperties.append(clShading)
     return cell
+
 
 def delete_paragraph(paragraph):
     """Delete a paragraph from the document.
