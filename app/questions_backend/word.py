@@ -115,7 +115,7 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
             if block["type"] == "paragraph":
                 add_text(block, para)
             elif block["type"] == "image":
-                add_image(block, para)
+                add_image(block, para, question.id)
             elif block["type"] == "table":
                 add_table(block, doc)
 
@@ -279,7 +279,7 @@ def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, align
         paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
 
 
-def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -> None:
+def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph, id: str) -> None:
     """Add image to a paragraph
 
     NOTE: The image is not aligned to the centre, but rather
@@ -294,9 +294,21 @@ def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -
     image_path = block["data"]["file"]["url"]
     rel_path = "./app" + image_path
 
-    # Add image
+    # Add paragraph to insert image into
     image = paragraph.add_run()
-    image.add_picture(rel_path, width=docx.shared.Cm(13))
+    
+    try:
+        # Try to add image
+        image.add_picture(rel_path, width=docx.shared.Cm(13))
+    except FileNotFoundError:
+        # Add error message if image not found
+        image.add_text(f"Image not found!\nQuestion ID: {id}\nIntended path: {rel_path}")
+        print(f"[ERROR] Image for {id} not found at {rel_path}!")
+
+        # Make error message big, red and bold
+        image.font.size = docx.shared.Pt(25)
+        image.font.color.rgb = docx.shared.RGBColor(255, 0, 0)
+        image.font.bold = True
 
     # Align image to centre
     paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
