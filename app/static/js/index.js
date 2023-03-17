@@ -3,6 +3,10 @@ const editor_question = new EditorJS({
     holder: "editorjs_question",
     placeholder: "Enter question content here...",
     tools: {
+        paragraph: {
+            class: Paragraph,
+            inlineToolbar: ["bold", "italic"],
+        },
         table: {
             class: Table,
             inlineToolbar: true,
