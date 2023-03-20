@@ -1,5 +1,5 @@
 .question-editor {
-    width: 717px;
+    width: 590px;
     margin: auto;
     padding: 30px;
     border: 1px solid #dcdcdc;
@@ -9,7 +9,7 @@
 }
 
 .answer-field {
-    width: 717px;
+    width: 640px;
     height: 50px;
     border: 1px solid #dcdcdc;
     border-radius: 4px;
@@ -81,6 +81,8 @@
     border: 1px solid #dcdcdc;
     border-radius: 4px;
     background-color: #fcfcfc;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .button {
