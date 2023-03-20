@@ -155,10 +155,10 @@ function validateQuestionID() {
 // Add filtering to question type and category select
 $("#qn-category").chosen({
     no_results_text: "No results matched",
-    width: "394px",
+    width: "485px",
 });
 $("#qn-level").chosen({ no_results_text: "No results matched" });
 $("#qn-section").chosen({
     no_results_text: "No results matched",
-    width: "50px",
+    width: "140px",
 });

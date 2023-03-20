@@ -8,6 +8,10 @@
     margin-bottom: 10px;
 }
 
+.question-ids label {
+    margin: 20px 5px;
+}
+
 .answer-field {
     width: 640px;
     height: 50px;
