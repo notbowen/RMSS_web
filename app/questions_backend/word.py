@@ -80,7 +80,7 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
 
     # Add "root" paragraph
     prev_root = doc.add_paragraph()
-    prev_root.paragraph_format.left_indent = docx.shared.Cm(0.5)
+    prev_root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
     prev_root.style = doc.styles["Question"]
     prev_root.paragraph_format.keep_with_next = True
 
@@ -91,17 +91,17 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
             root = prev_root
         else:
             root = doc.add_paragraph()
-            root.paragraph_format.left_indent = docx.shared.Cm(0.5)
+            root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
             root.paragraph_format.space_before = docx.shared.Pt(20)
             root.style = doc.styles["Question"]
             root.paragraph_format.keep_with_next = True
 
         # Add question
         for j, block in enumerate(question.content["blocks"]):
-            # Create new paragraph if not first block
-            if j != 0:
+            # Create new paragraph if not first block or if block is an image
+            if j != 0 or block["type"] == "image":
                 para = doc.add_paragraph()
-                para.paragraph_format.left_indent = docx.shared.Cm(0.5)
+                para.paragraph_format.left_indent = docx.shared.Cm(1)
                 para.paragraph_format.space_before = docx.shared.Pt(8)
                 para.style = doc.styles["Question"]
                 para.paragraph_format.keep_with_next = True
@@ -282,9 +282,6 @@ def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, align
 def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph, id: str) -> None:
     """Add image to a paragraph
 
-    NOTE: The image is not aligned to the centre, but rather
-    padded with spaces to the left to make it not touch the left.
-
     Args:
         block (Dict[str, str]): EditorJS block to add
         paragraph (docx.text.paragraph.Paragraph): Paragraph to add to
@@ -296,19 +293,27 @@ def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph, i
 
     # Add paragraph to insert image into
     image = paragraph.add_run()
-    
+
     try:
         # Try to add image
         image.add_picture(rel_path, width=docx.shared.Cm(13))
     except FileNotFoundError:
         # Add error message if image not found
-        image.add_text(f"Image not found!\nQuestion ID: {id}\nIntended path: {rel_path}")
+        image.add_text(
+            f"Image not found!\nQuestion ID: {id}\nIntended path: {rel_path}")
         print(f"[ERROR] Image for {id} not found at {rel_path}!")
 
         # Make error message big, red and bold
         image.font.size = docx.shared.Pt(25)
         image.font.color.rgb = docx.shared.RGBColor(255, 0, 0)
         image.font.bold = True
+
+    # Add captions if they exist
+    if block["data"]["caption"].strip() != "":
+        # Add a newline so that the caption is below the image
+        paragraph.add_run("\n")
+        add_text_from_str(block["data"]["caption"],
+                          paragraph, alignment="center")
 
     # Align image to centre
     paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
@@ -334,7 +339,7 @@ def add_table(block, doc) -> None:
     # Add indent to table
     tbl_pr = table._tblPr
     e = OxmlElement("w:tblInd")
-    e.set(qn("w:w"), "350")  # TODO: Find the correct value
+    e.set(qn("w:w"), "350")
     e.set(qn("w:type"), "dxa")
     tbl_pr.append(e)
 
@@ -367,9 +372,10 @@ def add_table(block, doc) -> None:
 
 def process_text(text: str) -> str:
     text = text.replace("&nbsp;", " ")
-    text = text.replace("\n", " ")  # WARN: Idk if this will break the code but \n usually shouldn't appear
-                                    # \n usually appears in the most random places when pasting from Word docx
-                                    # EditorJS only represents line breaks as <br> tags
+    # WARN: Idk if this will break the code but \n usually shouldn't appear
+    text = text.replace("\n", " ")
+    # \n usually appears in the most random places when pasting from Word docx
+    # EditorJS only represents line breaks as <br> tags
     text = text.replace("<br>", "\n")
     text = text.replace("<b></b>", "")
     text = text.strip("\n")
