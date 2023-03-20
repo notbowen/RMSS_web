@@ -152,7 +152,65 @@ def parse_structured_question(questions: List[Question], doc: docx.Document) -> 
     if len(questions) == 0:
         return
 
-    pass
+    # Add "root" paragraph
+    prev_root = doc.add_paragraph()
+    prev_root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
+    prev_root.paragraph_format.space_after = docx.shared.Pt(0)
+    prev_root.style = doc.styles["Question"]
+    prev_root.paragraph_format.keep_with_next = True
+
+    # Loop through and add questions
+    for i, question in enumerate(questions):
+        # Add question number
+        if i == 0:
+            root = prev_root
+        else:
+            root = doc.add_paragraph()
+            root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
+            root.paragraph_format.space_after = docx.shared.Pt(0)
+            root.style = doc.styles["Question"]
+
+            # Keep with next if question has more than 1 block
+            if len(question.content["blocks"]) > 1:
+                root.paragraph_format.keep_with_next = True
+
+        # Add question
+        for j, block in enumerate(question.content["blocks"]):
+            # Create new paragraph if not first block or if block is an image
+            if j != 0 or block["type"] == "image":
+                para = doc.add_paragraph()
+                para.paragraph_format.left_indent = docx.shared.Cm(1)
+                para.paragraph_format.space_after = docx.shared.Pt(0)
+                para.style = doc.styles["Question"]
+
+                # Keep with next if not last block
+                if j != len(question.content["blocks"]) - 1:
+                    para.paragraph_format.keep_with_next = True
+            else:
+                para = root
+
+            # Add a line break if previous block is a table
+            if j != 0 and question.content["blocks"][j - 1]["type"] == "table":
+                para.add_run().add_break(docx.enum.text.WD_BREAK.LINE)
+
+            if block["type"] == "paragraph":
+                add_text(block, para)
+            elif block["type"] == "image":
+                add_image(block, para, question.id)
+            elif block["type"] == "table":
+                add_table(block, doc)
+
+            # Add a line break
+            para.add_run().add_break(docx.enum.text.WD_BREAK.LINE)
+
+        # Make paragraph a list to have numbering
+        if i != 0:
+            list_number(doc, root, prev=prev_root)
+        else:
+            list_number(doc, root)
+
+    # Add page break
+    doc.add_page_break()
 
 
 def add_mcq_answers(questions: List[Question], doc: docx.Document) -> None:
@@ -339,7 +397,7 @@ def add_table(block, doc) -> None:
     # Add indent to table
     tbl_pr = table._tblPr
     e = OxmlElement("w:tblInd")
-    e.set(qn("w:w"), "350")
+    e.set(qn("w:w"), "567")
     e.set(qn("w:type"), "dxa")
     tbl_pr.append(e)
 
@@ -371,6 +429,7 @@ def add_table(block, doc) -> None:
 
 
 def process_text(text: str) -> str:
+    text = text.strip()
     text = text.replace("&nbsp;", " ")
     # WARN: Idk if this will break the code but \n usually shouldn't appear
     text = text.replace("\n", " ")
