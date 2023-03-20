@@ -289,7 +289,70 @@ def add_structured_answers(questions: List[Question], doc: docx.Document) -> Non
     if len(questions) == 0:
         return
 
-    pass
+    # Add MCQ heading
+    p = doc.add_paragraph("Structured Answers")
+    p.style = doc.styles["Answer Heading"]
+    p.paragraph_format.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+
+    # Insert line
+    insertHR(p)
+
+    # Add "root" paragraph
+    prev_root = doc.add_paragraph()
+    prev_root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
+    prev_root.paragraph_format.space_after = docx.shared.Pt(0)
+    prev_root.style = doc.styles["Question"]
+    prev_root.paragraph_format.keep_with_next = True
+
+    # Loop through and add questions
+    for i, question in enumerate(questions):
+        # Add question number
+        if i == 0:
+            root = prev_root
+        else:
+            root = doc.add_paragraph()
+            root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
+            root.paragraph_format.space_after = docx.shared.Pt(0)
+            root.style = doc.styles["Question"]
+
+            # Keep with next if question has more than 1 block
+            if len(question.answer["blocks"]) > 1:
+                root.paragraph_format.keep_with_next = True
+
+        # Add question
+        for j, block in enumerate(question.answer["blocks"]):
+            # Create new paragraph if not first block or if block is an image
+            if j != 0 or block["type"] == "image":
+                para = doc.add_paragraph()
+                para.paragraph_format.left_indent = docx.shared.Cm(1)
+                para.paragraph_format.space_after = docx.shared.Pt(0)
+                para.style = doc.styles["Question"]
+
+                # Keep with next if not last block
+                if j != len(question.answer["blocks"]) - 1:
+                    para.paragraph_format.keep_with_next = True
+            else:
+                para = root
+
+            # Add a line break if previous block is a table
+            if j != 0 and question.answer["blocks"][j - 1]["type"] == "table":
+                para.add_run().add_break(docx.enum.text.WD_BREAK.LINE)
+
+            if block["type"] == "paragraph":
+                add_text(block, para)
+            elif block["type"] == "image":
+                add_image(block, para, question.id)
+            elif block["type"] == "table":
+                add_table(block, doc)
+
+            # Add a line break
+            para.add_run().add_break(docx.enum.text.WD_BREAK.LINE)
+
+        # Make paragraph a list to have numbering
+        if i != 0:
+            list_number(doc, root, prev=prev_root)
+        else:
+            list_number(doc, root)
 
 
 def add_text(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph) -> None:
