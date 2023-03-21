@@ -392,12 +392,12 @@ def add_text_from_str(text: str, paragraph: docx.text.paragraph.Paragraph, align
     html_helper.insert_runs_from_html_map(paragraph, run_map)
 
     # Set alignment
-    if alignment == "left":
-        paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
-    elif alignment == "right":
+    if alignment == "right":
         paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.RIGHT
     elif alignment == "center":
         paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+    else:
+        paragraph.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.LEFT
 
 
 def add_image(block: Dict[str, str], paragraph: docx.text.paragraph.Paragraph, id: str) -> None:
