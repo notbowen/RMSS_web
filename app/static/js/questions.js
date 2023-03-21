@@ -229,6 +229,29 @@ function populate_selected_questions() {
 // On page load, populate selected questions div
 populate_selected_questions();
 
+// Function to clear selected questions
+function clear_selected_questions() {
+    // Clear selected questions div
+    let selected_questions_div = document.getElementById(
+        "selected-questions-list"
+    );
+
+    // For each question in selected questions div
+    $(selected_questions_div).children().each(function () {
+        // Get question id
+        let id = $(this).text();
+
+        // Remove from selected questions div
+        remove_question_by_id(id);
+    });
+
+    // Show number of selected questions
+    $("#sel-qns-h2").text("0 Selected Question(s)");
+
+    // Clear selected questions array
+    localStorage.setItem("selected_questions", JSON.stringify([]));
+}
+
 // When export to word button is pressed
 document.getElementById("export-btn").addEventListener("click", function () {
     // Get selected questions from local storage
@@ -298,6 +321,9 @@ document.getElementById("export-btn").addEventListener("click", function () {
                     window.URL.revokeObjectURL(url);
                     link.remove();
                 }, 100);
+
+                // Clear selected questions
+                clear_selected_questions();
             }
         }
 
