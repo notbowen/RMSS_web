@@ -112,4 +112,43 @@ $(document).ready(function($) {
     $(".row_data").enterKey(function() {
         $(".row_data").blur();
     });
+
+    // Add new topic
+    $("#btn_add_topic").click(function(event) {
+        var level = $("#level").val();
+        var topic = $("#topic").val();
+        var subject = $("#subject").val();
+
+        if (level.trim() == "" || topic.trim() == "" || subject.trim() == "") {
+            alert("Please fill in all fields!");
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/topics/add", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+
+            if (xhr.status !== 200) {
+                alert("Failed to add topic!\nError: " + xhr.responseText);
+                return;
+            }
+
+            // Clear fields
+            $("#level").val("");
+            $("#topic").val("");
+            $("#subject").val("");
+
+            // Reload page
+            location.reload();
+        }
+
+        xhr.send(JSON.stringify({
+            "level": level,
+            "topic": topic,
+            "subject": subject
+        }));
+    });
 });

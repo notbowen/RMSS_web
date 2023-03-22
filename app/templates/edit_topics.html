@@ -9,31 +9,46 @@
 {% block content %}
     <h1 style="text-align: center;">Edit Topics</h1>
 
-    <table class="table table-hover" style="width: 80%; margin: auto;">
-        <thead>
-            <tr>
-                <th>Level</th>
-                <th>Topic</th>
-                <th>Subject</th>
-                <th>Options</th>
-            </tr>
-        </thead>
+    <div style="width: 80%; margin: auto;">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Subject</th>
+                    <th>Topic</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
 
-        <tbody>
-            {% for category in categories %}
-            <tr row_id="{{ category.id }}">
-                <td><div class="row_data" edit_type="click" col_name="level">{{ category.level }}</div></td>
-                <td><div class="row_data" edit_type="click" col_name="topic">{{ category.topic }}</div></td>
-                <td><div class="row_data" edit_type="click" col_name="subject">{{ category.subject }}</div></td>
+            <tbody>
+                {% for category in categories %}
+                <tr row_id="{{ category.id }}">
+                    <td><div class="row_data" edit_type="click" col_name="level">{{ category.level }}</div></td>
+                    <td><div class="row_data" edit_type="click" col_name="subject">{{ category.subject }}</div></td>
+                    <td><div class="row_data" edit_type="click" col_name="topic">{{ category.topic }}</div></td>
 
-                <td>
-                    <span class="btn_edit"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Edit</a></span>
+                    <td>
+                        <span class="btn_edit"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Edit</a></span>
 
-                    <span class="btn_save"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Save</a></span>
-                    <span class="btn_cancel"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Cancel</a></span>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                        <span class="btn_save"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Save</a></span>
+                        <span class="btn_cancel"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Cancel</a></span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="width: 80%; margin: auto; text-align: center;">
+        <label for="level">Level</label>
+        <input type="text" id="level" placeholder="E.g Secondary 1">
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="E.g Math">
+
+        <label for="topic">Topic</label>
+        <input type="text" id="topic" placeholder="E.g Functions and Graphs" size="50">
+
+        <button id="btn_add_topic">Add Topic</button>
+    </div>
 {% endblock %}
