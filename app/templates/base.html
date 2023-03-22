@@ -36,11 +36,11 @@
   </head>
   <body>
     <!-- NavBar -->
-    <ul class="navbar">
-      <li class="navbar"><a href="#" class="active">Question Bank</a></li>
-      <li class="navbar"><a href="{{ url_for('main.index') }}">Add Question</a></li>
-      <li class="navbar"><a href="{{ url_for('questions_frontend.search_question') }}">Add to Book</a></li>
-      <li class="navbar"><a href="{{ url_for('topics.edit_topics') }}">Edit Topics</a></li>
+    <ul class="navbar-custom">
+      <li class="navbar-custom"><a href="#" class="active">Question Bank</a></li>
+      <li class="navbar-custom"><a href="{{ url_for('main.index') }}">Add Question</a></li>
+      <li class="navbar-custom"><a href="{{ url_for('questions_frontend.search_question') }}">Add to Book</a></li>
+      <li class="navbar-custom"><a href="{{ url_for('topics.edit_topics') }}">Edit Topics</a></li>
     </ul>
 
     {% block content %} {% endblock %}

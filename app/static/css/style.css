@@ -140,7 +140,7 @@ body {
     margin: 0px;
 }
 
-ul.navbar {
+ul.navbar-custom {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -148,11 +148,11 @@ ul.navbar {
     background-color: #333;
 }
 
-li.navbar {
+li.navbar-custom {
     display: inline-block;
 }
 
-li.navbar a {
+li.navbar-custom a {
     display: block;
     color: white;
     text-align: center;
@@ -160,7 +160,7 @@ li.navbar a {
     text-decoration: none;
 }
 
-li.navbar a:hover:not(.active) {
+li.navbar-custom a:hover:not(.active) {
     background-color: #111;
 }
 
