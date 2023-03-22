@@ -14,6 +14,7 @@ $.fn.enterKey = function (fnc) {
 $(document).ready(function($) {
     // Hide the save and cancel buttons
     $(document).find(".btn_save").hide();
+    $(document).find(".btn_delete").hide();
     $(document).find(".btn_cancel").hide();
 
     // Make whole table row editable
@@ -22,6 +23,7 @@ $(document).ready(function($) {
         var tbl_row = $(this).closest("tr");
 
         tbl_row.find(".btn_save").show();
+        tbl_row.find(".btn_delete").show();
         tbl_row.find(".btn_cancel").show();
 
         tbl_row.find(".btn_edit").hide();
@@ -46,6 +48,7 @@ $(document).ready(function($) {
 
         // Hide save & cancel buttons
         tbl_row.find(".btn_save").hide();
+        tbl_row.find(".btn_delete").hide();
         tbl_row.find(".btn_cancel").hide();
 
         // Show edit button
@@ -73,6 +76,7 @@ $(document).ready(function($) {
 
         // Hide save & cancel buttons
         tbl_row.find(".btn_save").hide();
+        tbl_row.find(".btn_delete").hide();
         tbl_row.find(".btn_cancel").hide();
 
         // Show edit button
@@ -150,5 +154,37 @@ $(document).ready(function($) {
             "topic": topic,
             "subject": subject
         }));
+    });
+
+    // Delete topic
+    $(".btn_delete").click(function(event) {
+        // Ensure user wants to delete
+        if (!confirm("Are you sure you want to delete this topic?")) {
+            return;
+        }
+
+        // Get row ID
+        var tbl_row = $(this).closest("tr");
+        var row_id = tbl_row.attr("row_id");
+
+        // Send to server
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/topics/delete?id=" + row_id, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+
+            // Alert user if error
+            if (xhr.status !== 200) {
+                alert("Failed to delete topic!\nError: " + xhr.responseText);
+                return;
+            }
+
+            // Remove row from table if successful
+            tbl_row.remove();
+        }
+
+        xhr.send();
     });
 });

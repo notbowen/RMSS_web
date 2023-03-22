@@ -76,3 +76,29 @@ def add_topic():
     db.session.commit()
 
     return "OK", 200
+
+@bp.route("/delete", methods=["POST"])
+def delete_topic():
+    """ Deletes a topic from the database """
+
+    # Get ID from URL query parameters
+    id = request.args.get("id", type=int)
+
+    # Ensure ID is present
+    if id == None:
+        return "Missing ID", 400
+
+    # Ensure ID is valid
+    category = Category.query.get(id)
+    if category == None:
+        return "Invalid ID", 400
+
+    # Ensure that the topic is not in use
+    if len(category.questions) != 0:
+        return "Topic is in use!", 400
+
+    # Delete topic
+    db.session.delete(category)
+    db.session.commit()
+
+    return "OK", 200

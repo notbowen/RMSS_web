@@ -28,10 +28,11 @@
                     <td><div class="row_data" edit_type="click" col_name="topic">{{ category.topic }}</div></td>
 
                     <td>
-                        <span class="btn_edit"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Edit</a></span>
+                        <span class="btn_edit"><a href="#" class="btn btn-primary" row_id="{{ category.id }}">Edit</a></span>
 
-                        <span class="btn_save"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Save</a></span>
-                        <span class="btn_cancel"><a href="#" class="btn btn-link" row_id="{{ category.id }}">Cancel</a></span>
+                        <span class="btn_save"><a href="#" class="btn btn-primary" row_id="{{ category.id }}">Save</a></span>
+                        <span class="btn_delete"><a href="#" class="btn btn-danger" row_id="{{ category.id }}">Delete</a></span>
+                        <span class="btn_cancel"><a href="#" class="btn btn-primary" row_id="{{ category.id }}">Cancel</a></span>
                     </td>
                 </tr>
                 {% endfor %}
@@ -39,7 +40,7 @@
         </table>
     </div>
 
-    <div style="width: 80%; margin: auto; text-align: center;">
+    <div style="margin: auto; text-align: center;">
         <label for="level">Level</label>
         <input type="text" id="level" placeholder="E.g Secondary 1">
 
