@@ -81,6 +81,7 @@ def parse_mcq_question(questions: List[Question], doc: docx.Document) -> None:
     # Add "root" paragraph
     prev_root = doc.add_paragraph()
     prev_root.paragraph_format.first_line_indent = docx.shared.Cm(-1)
+    prev_root.paragraph_format.page_break_before = True  # Ensure that first MCQ question is on new page
     prev_root.style = doc.styles["Question"]
     prev_root.paragraph_format.keep_with_next = True
 
