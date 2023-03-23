@@ -28,7 +28,27 @@ const editor_question = new EditorJS({
 const editor_answer = new EditorJS({
     holder: "editorjs_answer",
     placeholder: "Enter answer here...",
-    minHeight: 100
+    minHeight: 100,
+    tools: {
+        paragraph: {
+            class: Paragraph,
+            inlineToolbar: ["bold", "italic"],
+        },
+        table: {
+            class: Table,
+            inlineToolbar: true,
+        },
+        image: {
+            class: ImageTool,
+            config: {
+                endpoints: {
+                    byFile: "/api/image/upload_file",
+                    byUrl: "/api/image/upload_url",
+                },
+            },
+            inlineToolbar: true,
+        },
+    },
 });
 
 // Alert user if EditorJS fails to load
