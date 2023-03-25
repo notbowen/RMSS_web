@@ -27,6 +27,10 @@ def add_to_template():
     template_id = data["template"]
     questions = data["questions"]
 
+    # Ensure that template ID is a string
+    if not isinstance(template_id, str):
+        return "Template ID should be a string!", 400
+
     # Ensure that questions is a list
     if not isinstance(questions, list):
         return "Questions should be an array!", 400
@@ -35,18 +39,11 @@ def add_to_template():
     if len(questions) == 0:
         return "No questions selected!", 400
 
-    # If template ID is a string, means it's a new template
-    if not template_id.isdigit():
-        template = Template(name=template_id, questions=questions)
-        db.session.add(template)
-        db.session.commit()
-
-        return f"Template \"{template_id}\" created", 200
-
-    # Get template from database and ensure it exists
+    # Get template from database and create new template if it does not exist
     template = Template.query.filter_by(id=template_id).first()
     if template is None:
-        return "Template not found", 404
+        template = Template(name=template_id)
+        db.session.add(template)
     
     # Add questions to template
     template_questions = set(template.questions)  # Convert to set to remove duplicates
