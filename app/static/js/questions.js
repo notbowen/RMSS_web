@@ -94,6 +94,25 @@ document.getElementById("search-btn").addEventListener("click", function () {
 $("#section-select").chosen({ width: "65px" });
 $("#category-select").chosen();
 
+// Add filtering + custom entry to template select
+// Source: https://stackoverflow.com/questions/18706735/adding-text-other-than-the-selected-text-options-to-the-select-with-the-chosen-p
+var select, chosen;
+
+select = $("#template-select")
+select.chosen({ no_results_text: 'Press Enter to add new entry:', width: "70%" })
+
+chosen = select.data("chosen");
+
+chosen.dropdown.find("input").on("keyup", function (e) {
+    if (e.which == 13 && chosen.dropdown.find("li.no-results").length > 0) {
+        var option = $("<option>").val(this.value).text(this.value);
+
+        select.prepend(option);
+        select.find(option).prop("selected", true);
+        select.trigger("chosen:updated");
+    }
+});
+
 // Slide div in and out on click
 $(document).ready(function () {
     var slider_width = $(".selected-questions").width();

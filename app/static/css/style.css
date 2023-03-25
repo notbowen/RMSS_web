@@ -128,6 +128,19 @@
     margin-bottom: 10px;
 }
 
+#template-btn {
+    background-color: #04aa6d;
+    width: 70%;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+#template_select_chosen {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
 .question_search {
     text-align: center;
 }
