@@ -28,6 +28,9 @@ def create_app(config_class=DevConfig):
     from app.topics import bp as topics_bp
     app.register_blueprint(topics_bp, url_prefix='/topics')
 
+    from app.question_templates import bp as question_templates_bp
+    app.register_blueprint(question_templates_bp, url_prefix='/templates')
+
     # Create a route for health checks
     @app.route('/health')
     def health():
