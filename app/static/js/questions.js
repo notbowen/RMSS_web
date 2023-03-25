@@ -349,3 +349,53 @@ document.getElementById("export-btn").addEventListener("click", function () {
         request.send(formData);
     }
 });
+
+// When export to template button is pressed
+document.getElementById("template-btn").addEventListener("click", function () {
+    // Ensure that at least one question is selected
+    let selected_questions = JSON.parse(
+        localStorage.getItem("selected_questions")
+    );
+
+    // Reject if no questions are selected
+    if (selected_questions === null || selected_questions.length === 0) {
+        alert("Please select at least one question to export.");
+        return;
+    }
+
+    // Ensure that template selected is not default
+    let template = document.getElementById("template-select").value;
+    if (template === "") {
+        alert("Please select a template to export to.");
+        return;
+    }
+
+    // Create data
+    let data = {
+        "template": template,
+        "questions": selected_questions
+    };
+
+    // Prepare to send as POST request to server
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/templates/add", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) {
+            return;
+        }
+
+        // If response is not ok
+        if (xhr.status !== 200) {
+            alert("Unable to export questions!\nError: " + xhr.responseText);
+            return;
+        }
+
+        // If response is ok
+        alert("Questions added to template!");
+    }
+
+    // Send data
+    xhr.send(JSON.stringify(data));
+});
