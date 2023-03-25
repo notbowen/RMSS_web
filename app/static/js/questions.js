@@ -107,7 +107,7 @@ chosen.dropdown.find("input").on("keyup", function (e) {
     if (e.which == 13 && chosen.dropdown.find("li.no-results").length > 0) {
         var option = $("<option>").val(this.value).text(this.value);
 
-        select.prepend(option);
+        select.append(option);
         select.find(option).prop("selected", true);
         select.trigger("chosen:updated");
     }
