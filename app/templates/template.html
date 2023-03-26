@@ -7,6 +7,7 @@
 
 {% block content %}
     <h1 style="text-align: center;">Template: {{ template.name }}</h1>
+    <button class="button" id="delete-btn" onclick="deleteTemplateClicked('{{ template.id }}')">Delete Template</button>
     <div class="template-questions">
         {% for question in template.questions %}
             <div
