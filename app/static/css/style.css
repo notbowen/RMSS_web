@@ -180,3 +180,23 @@ li.navbar-custom a:hover:not(.active) {
 .active {
     background-color: #04aa6d;
 }
+
+.template-list {
+    margin: auto;
+    width: 50%;
+}
+
+.template-card {
+    text-align: center;
+    margin: 20px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fcfcfc;
+    transition: 0.3s;
+}
+
+.template-card:hover {
+    background-color: #abe2ff;
+    cursor: pointer;
+}

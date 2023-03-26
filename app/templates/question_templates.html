@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Templates{% endblock %}
 
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/question_templates.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <h1 style="text-align: center;">Templates</h1>
+
+    <div class="template-list">
+        {% for template in templates %}
+            <div id="{{ template.id }}" class="template-card" onclick="templateCardClicked(this.id)">
+                <h2>{{ template.name }}</h2>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

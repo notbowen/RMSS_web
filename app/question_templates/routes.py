@@ -8,7 +8,8 @@ from app.models.question import Question
 
 @bp.route("/", methods=["GET"])
 def index():
-    return render_template("question_templates.html")
+    templates = Template.query.all()
+    return render_template("question_templates.html", templates=templates)
 
 @bp.route("/add", methods=["POST"])
 def add_to_template():
