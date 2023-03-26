@@ -54,6 +54,28 @@ def delete_question(template_id):
 
     return "Question removed from template", 200
 
+@bp.route("/delete", methods=["DELETE"])
+def delete_template():
+    # Get template ID from request
+    template_id = request.args.get("id")
+
+    # Ensure that template ID is present
+    if template_id is None:
+        return "No template ID specified", 400
+    
+    # Try to get template from database
+    template = Template.query.filter_by(id=template_id).first()
+
+    # If template does not exist, return 404
+    if template is None:
+        return "Template does not exist", 404
+    
+    # Delete template
+    db.session.delete(template)
+    db.session.commit()
+
+    return "Template deleted", 200
+
 @bp.route("/add", methods=["POST"])
 def add_to_template():
     """ Adds selected questions to a template.
