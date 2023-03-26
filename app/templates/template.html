@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ template.name }}{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/question_templates.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Template: {{ template.name }}</h1>
+    <div class="template-questions">
+        {% for question in template.questions %}
+            <div
+                class="question-editor"
+                id="{{ question.id }}"
+            >
+                <div id="{{ question.id }}">
+                    <p>Question ID: {{ question.id }}</p>
+                    <p>
+                        Category: {{ question.category.topic }} ({{ question.category.level }}, {{ question.category.subject }})
+                    </p>
+                </div>
+
+                <div id="question-{{ question.id }}" class="editorjs"></div>
+                <div id="answer-{{ question.id }}" class="editorjs"></div>
+                  <button
+                      onclick="event.stopPropagation(); removeQuestionClicked('{{ question.id }}', '{{ template.id }}');"
+                      class="button"
+                      id="delete-btn"
+                      style="display: inline; width: 180px;"
+                  >
+                    Remove from Template
+                  </button>
+                </div>
+            </div>
+            <script>
+                new EditorJS({
+                  holder: "question-{{ question.id }}",
+                  minHeight: 50,
+                  tools: {
+                      paragraph: {
+                        class: Paragraph,
+                        inlineToolbar: ["bold", "italic"],
+                      },
+                      table: {
+                        class: Table,
+                        inlineToolbar: true,
+                      },
+                      image: {
+                        class: ImageTool,
+                        config: {
+                          endpoints: {
+                            byFile: "/api/image/upload_file",
+                            byUrl: "/api/image/upload_url",
+                          },
+                        },
+                        inlineToolbar: true,
+                      },
+                    },
+                  {% autoescape false %}
+                  data: {{ question.content | replace("False", "false") | replace("True", "true") }},
+                  {% endautoescape %}
+                  readOnly: true
+                });
+            </script>
+            <script>
+                new EditorJS({
+                    holder: "answer-{{ question.id }}",
+                    minHeight: 20,
+                    tools: {
+                      paragraph: {
+                        class: Paragraph,
+                        inlineToolbar: ["bold", "italic"],
+                      },
+                      table: {
+                        class: Table,
+                        inlineToolbar: true,
+                      },
+                      image: {
+                        class: ImageTool,
+                        config: {
+                          endpoints: {
+                            byFile: "/api/image/upload_file",
+                            byUrl: "/api/image/upload_url",
+                          },
+                        },
+                        inlineToolbar: true,
+                      },
+                    },
+                    {% autoescape false %}
+                    data: {{ question.answer | replace("False", "false") | replace("True", "true") }},
+                    {% endautoescape %}
+                    readOnly: true
+                });
+            </script>
+        {% endfor %}
+    </div>
+{% endblock %}

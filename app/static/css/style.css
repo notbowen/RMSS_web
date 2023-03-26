@@ -200,3 +200,17 @@ li.navbar-custom a:hover:not(.active) {
     background-color: #abe2ff;
     cursor: pointer;
 }
+
+.template-questions {
+    margin: auto;
+    width: 50%;
+}
+
+.template-question-card {
+    text-align: center;
+    margin: 20px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fcfcfc;
+}

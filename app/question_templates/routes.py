@@ -11,6 +11,49 @@ def index():
     templates = Template.query.all()
     return render_template("question_templates.html", templates=templates)
 
+@bp.route("/<template_id>", methods=["GET"])
+def template(template_id):
+    # Try to get template from database
+    template = Template.query.filter_by(id=template_id).first()
+
+    # If template does not exist, return 404
+    if template is None:
+        return render_template("404.html"), 404
+    
+    return render_template("template.html", template=template)
+
+@bp.route("/<template_id>/delete_question", methods=["DELETE"])
+def delete_question(template_id):
+    # Get question ID from request
+    question_id = request.args.get("id")
+
+    # Ensure that question ID is present
+    if question_id is None:
+        return "No question ID specified", 400
+
+    # Try to get template from database
+    template = Template.query.filter_by(id=template_id).first()
+
+    # If template does not exist, return 404
+    if template is None:
+        return "Template does not exist", 404
+    
+    # Try to get question from database
+    question = Question.query.filter_by(id=question_id).first()
+
+    # If question does not exist, return 404
+    if question is None:
+        return "Question does not exist", 404
+    
+    # Remove question from template
+    try:
+        template.questions.remove(question)
+        db.session.commit()
+    except ValueError:
+        return "Question not found in template", 404
+
+    return "Question removed from template", 200
+
 @bp.route("/add", methods=["POST"])
 def add_to_template():
     """ Adds selected questions to a template.
