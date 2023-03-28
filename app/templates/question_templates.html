@@ -3,6 +3,7 @@
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='js/question_templates.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
 {% endblock %}
 
 {% block content %}
@@ -10,8 +11,16 @@
 
     <div class="template-list">
         {% for template in templates %}
-            <div id="{{ template.id }}" class="template-card" onclick="templateCardClicked(this.id)">
-                <h2>{{ template.name }}</h2>
+            <div class="template-card">
+                <div style="float: left;">
+                    <h2>{{ template.name }}</h2>
+                    <p>Questions: {{ template.questions | length }}</p>
+                </div>
+
+                <div style="float: right;">
+                    <button class="btn btn-primary" onclick="templateCardClicked(this.id)" id="{{ template.id }}">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteTemplateClicked(this.id)" id="{{ template.id }}">Delete</button>
+                </div>
             </div>
         {% endfor %}
     </div>
