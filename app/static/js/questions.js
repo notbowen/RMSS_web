@@ -399,3 +399,57 @@ document.getElementById("template-btn").addEventListener("click", function () {
     // Send data
     xhr.send(JSON.stringify(data));
 });
+
+// When import from template button is pressed
+document.getElementById("import-template-btn").addEventListener("click", function () {
+    // Get selected template
+    let template = document.getElementById("template-select").value;
+
+    // Reject if no template is selected
+    if (template === "") {
+        alert("Please select a template to import from.");
+        return;
+    }
+
+    // Ensure that template selected already exists by making a GET request to server
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/templates/get_template?id=" + template, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) {
+            return;
+        }
+
+        // If response is not ok
+        if (xhr.status !== 200) {
+            alert("Unable to import questions!\nError: " + xhr.responseText);
+            return;
+        }
+
+        // Ask if user wants to append or overwrite
+        let overwrite = confirm("Do you want to overwrite your current selected questions?");
+
+        // If user wants to overwrite
+        if (overwrite) {
+            // Clear selected questions
+            clear_selected_questions();
+        }
+
+        // If response is ok
+        let response = JSON.parse(xhr.responseText);
+        let questions = response["question_ids"];
+
+        // For each question
+        for (let i = 0; i < questions.length; i++) {
+            // Get question
+            let question_id = questions[i];
+
+            // Add question to selected questions
+            add_question_by_id(question_id);
+        }
+    }
+
+    // Send data
+    xhr.send();
+});

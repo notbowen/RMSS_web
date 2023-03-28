@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import jsonify, render_template, request
 
 from app.question_templates import bp
 from app.extensions import db
@@ -21,6 +21,31 @@ def template(template_id):
         return render_template("404.html"), 404
     
     return render_template("template.html", template=template)
+
+@bp.route("/get_template", methods=["GET"])
+def get_template():
+    # Get template ID from request
+    template_id = request.args.get("id")
+
+    # Ensure that template ID is present
+    if template_id is None:
+        return "No template ID specified", 400
+    
+    # Try to get template from database
+    template = Template.query.filter_by(id=template_id).first()
+
+    # If template does not exist, return 404
+    if template is None:
+        return "Template does not exist", 404
+
+    # Structure response
+    response = {
+        "id": template.id,
+        "name": template.name,
+        "question_ids": [question.id for question in template.questions]
+    }
+    
+    return jsonify(response), 200
 
 @bp.route("/<template_id>/delete_question", methods=["DELETE"])
 def delete_question(template_id):
