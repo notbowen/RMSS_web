@@ -364,6 +364,16 @@ document.getElementById("export-btn").addEventListener("click", function () {
     }
 });
 
+// Clear questions when clear button is pressed
+document.getElementById("clear-qns-btn").addEventListener("click", function () {
+    // Ask user for confirmation
+    let confirmation = confirm("Are you sure you want to clear all selected questions?");
+    if (!confirmation) return;
+
+    // Clear selected questions
+    clear_selected_questions();
+});
+
 // When export to template button is pressed
 document.getElementById("template-btn").addEventListener("click", function () {
     // Ensure that at least one question is selected
