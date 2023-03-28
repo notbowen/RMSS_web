@@ -155,20 +155,34 @@ function add_question_by_id(id) {
     let selected_questions = JSON.parse(
         localStorage.getItem("selected_questions")
     );
-    selected_questions.push(id);
-    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
 
-    // Add to selected questions div
-    let selected_questions_div = document.getElementById(
-        "selected-questions-list"
-    );
-    selected_questions_div.innerHTML += "<p>" + id + "</p>";
-
-    // Add selected class to question div
-    let question_div = document.getElementById(id);
-    if (question_div !== null) {
-        question_div.classList.add("selected");
+    // If selected questions is null, set it to an empty array
+    if (selected_questions === null) {
+        selected_questions = [];
     }
+
+    // Check if question is already in the array and add to div if not
+    if (!selected_questions.includes(id)) {
+        // Add to selected questions div
+        let selected_questions_div = document.getElementById(
+            "selected-questions-list"
+        );
+        selected_questions_div.innerHTML += "<p>" + id + "</p>";
+
+        // Add selected class to question div
+        let question_div = document.getElementById(id);
+        if (question_div !== null) {
+            question_div.classList.add("selected");
+        }
+    }
+
+    // Convert to set to remove duplicates
+    selected_questions = new Set(selected_questions);
+    selected_questions.add(id);
+
+    // Convert back to array
+    selected_questions = Array.from(selected_questions);
+    localStorage.setItem("selected_questions", JSON.stringify(selected_questions));
 
     // Show number of selected questions
     $("#sel-qns-h2").text(selected_questions.length + " Selected Question(s)");
