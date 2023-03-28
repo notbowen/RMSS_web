@@ -199,14 +199,8 @@ li.navbar-custom a:hover:not(.active) {
     border-radius: 4px;
     padding: 10px;
     background-color: #fcfcfc;
-    transition: 0.3s;
     overflow: auto;
     padding: 10px;
-}
-
-.template-card:hover {
-    background-color: #abe2ff;
-    cursor: pointer;
 }
 
 .template-questions {
