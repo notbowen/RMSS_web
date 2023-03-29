@@ -58,7 +58,7 @@ Data can be inserted by clicking on an empty space below, or by clicking the `+`
 The `+` icon will list `3` options:
 
 1. Text
-   - Normal text with options to **bold** and *italicise* the text.
+   - Normal text can be written with options to **bold** and *italicise* the text, by highlighting the text and selecting the appropriate style.
    - Text is aligned to the left by default.
    - Upon clicking the 6 dots, `left`, `center` and `right` alignment options will be made available.
 2. Table
