@@ -1,0 +1,7 @@
+docx==0.2.4
+docxcompose==1.4.0
+Flask==2.2.3
+flask_sqlalchemy==3.0.3
+haggis==0.9.1
+SQLAlchemy==2.0.7
+Werkzeug==2.2.3
